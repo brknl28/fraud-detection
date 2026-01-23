@@ -1,86 +1,56 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { createWorker } from 'tesseract.js';
 
-
-function extractWords(blocks: any[]) {
-    if (!blocks) return [];
-    return blocks
-        .flatMap(block => block.paragraphs || [])
-        .flatMap(paragraph => paragraph.lines || [])
-        .flatMap(line => line.words || [])
-        .map(w => ({
-            text: w.text,
-            confidence: w.confidence,
-            bbox: w.bbox
-        }));
-}
+const images = import.meta.glob('/src/lib/assets/documents/*.{png,jpg,jpeg}', { eager: true, as: 'url' });
+const jsonFiles = import.meta.glob('/src/lib/assets/documents/*.json', { eager: true, as: 'raw' });
 
 export const GET: RequestHandler = async () => {
     try {
-        const documentsDir = path.resolve('static/assets/documents');
-        const files = await fs.readdir(documentsDir);
-        const imageFiles = files.filter(file => /\.(jpg|jpeg|png)$/i.test(file));
         const documentList = [];
-        let worker: any = null;
 
-        for (const file of imageFiles) {
-            const imagePath = path.join(documentsDir, file);
-            const jsonFilename = `${file}.ocr.json`;
-            const jsonPath = path.join(documentsDir, jsonFilename);
+        for (const [filePath, imageUrl] of Object.entries(images)) {
+            const filename = filePath.split('/').pop() || 'unknown';
+            const jsonPath = `${filePath}.ocr.json`;
+            const jsonContent = jsonFiles[jsonPath];
 
-            let ocrData;
-            let anomalies = [];
+            let ocrData: any = null;
+            let anomalies: any[] = [];
 
-            try {
-                const fileContent = await fs.readFile(jsonPath, 'utf-8');
-                ocrData = JSON.parse(fileContent);
+            if (jsonContent) {
+                try {
+                    ocrData = JSON.parse(jsonContent as string);
 
-                anomalies = (ocrData.anomalies || []).map((a: any) => ({
-                    ...a,
-                    type: a.type || (Math.random() > 0.5 ? 'original' : 'forged')
-                }));
+                    anomalies = (ocrData.anomalies || []).map((a: any) => ({
+                        ...a,
+                        type: a.type || (Math.random() > 0.5 ? 'original' : 'forged')
+                    }));
 
-                if (ocrData.anomalies?.some((a: any) => !a.type)) {
-                    ocrData.anomalies = anomalies;
-                    await fs.writeFile(jsonPath, JSON.stringify(ocrData, null, 2));
+                    if (ocrData.anomalies?.some((a: any) => !a.type)) {
+                        ocrData.anomalies = anomalies;
+                    }
+                } catch (e) {
+                    console.error(`Error parsing JSON for ${filename}`, e);
                 }
-            } catch {
-                console.log(`Generating OCR for ${file}...`);
+            }
 
-                if (!worker) {
-                    worker = await createWorker('eng');
-                }
-
-                const ret = await worker.recognize(imagePath);
-                const { text, blocks } = ret.data;
-                const wordData = extractWords(blocks || []);
-
+            if (!ocrData) {
                 ocrData = {
                     scanDate: new Date().toISOString(),
-                    fullText: text,
-                    words: wordData,
-                    anomalies: [] // Default empty anomalies
+                    fullText: "",
+                    words: [],
+                    anomalies: []
                 };
-
-                await fs.writeFile(jsonPath, JSON.stringify(ocrData, null, 2));
             }
 
             documentList.push({
-                id: file,
-                label: file,
-                imageSrc: `/assets/documents/${file}`,
-                imageAlt: `Document ${file}`,
+                id: filename,
+                label: filename,
+                imageSrc: imageUrl,
+                imageAlt: `Document ${filename}`,
                 ocrText: ocrData.fullText,
                 anomalies: anomalies,
                 ocrData: ocrData
             });
-        }
-
-        if (worker) {
-            await worker.terminate();
         }
 
         return json(documentList);

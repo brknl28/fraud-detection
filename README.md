@@ -1,11 +1,9 @@
 # Fraud Detection
 
 ## Links
-* **Live Demo:** [Link hier einfügen]
+* **Live Demo:** [https://fraud-detection-brknl28.vercel.app](fraud-detection-brknl28.vercel.app)
 
 ## Projektübersicht
-
-**Arbeitszeit:** Ich habe ungefähr 12 bis 13 Stunden daran gearbeitet.
 
 ### Entwicklungsprozess und Details
 Ich habe das Projekt mit **Svelte 5** (neueste Version) und **Tailwind CSS** gestartet. Ich habe ein "One-Page"-Design mit einer Sidebar rechts gebaut.
