@@ -1,7 +1,7 @@
 # Fraud Detection
 
 ## Links
-* **Live Demo:** [https://fraud-detection-brknl28.vercel.app](fraud-detection-brknl28.vercel.app)
+* **Live Demo:** [fraud-detection-brknl28.vercel.app](https://fraud-detection-brknl28.vercel.app)
 
 ## Projektübersicht
 
