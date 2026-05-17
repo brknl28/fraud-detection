@@ -56,14 +56,14 @@
         class="control-chip"
         class:active={documentStore.allAnomaliesVisible}
         onclick={() => documentStore.toggleAllAnomalies()}
-        title="Alle Bereiche anzeigen"
+        title="Show all fields"
     >
         {#if documentStore.allAnomaliesVisible}
             <Eye size={14} />
         {:else}
             <EyeOff size={14} />
         {/if}
-        <span>Bereiche</span>
+        <span>Fields</span>
     </button>
 
     <button
@@ -71,7 +71,7 @@
         class="control-chip"
         class:active={documentStore.ocrVisible}
         onclick={() => documentStore.toggleOcr()}
-        title="OCR-Text anzeigen"
+        title="Show OCR text"
     >
         {#if documentStore.ocrVisible}
             <Eye size={14} />
@@ -82,9 +82,9 @@
     </button>
 </div>
 
-<div class="ocr-words-container" role="list" aria-label="OCR-Wortliste">
+<div class="ocr-words-container" role="list" aria-label="OCR word list">
     {#if documentStore.ocrLines.length === 0}
-        <p class="empty-state">Keine OCR-Daten vorhanden</p>
+        <p class="empty-state">No OCR data found</p>
     {:else}
         <div class="ocr-sections">
             {#if redItems.length > 0}
@@ -105,7 +105,7 @@
                                 {#if isRedOpen}<ChevronDown
                                         size={14}
                                     />{:else}<ChevronRight size={14} />{/if}
-                                <span>Gefälscht</span>
+                                <span>Forged</span>
                                 <span class="count-badge red"
                                     >{redItems.length}</span
                                 >
@@ -122,8 +122,8 @@
                                 documentStore.toggleOcrWordsByType("DANGER");
                             }}
                             title={documentStore.isTypeFullySelected("DANGER")
-                                ? "Alle abwählen"
-                                : "Alle auswählen"}
+                                ? "Remove all"
+                                : "Select all"}
                         >
                             {#if documentStore.isTypeFullySelected("DANGER")}
                                 <CheckCircle2 size={18} />
@@ -137,7 +137,7 @@
                             id="accordion-red-content"
                             class="accordion-content"
                             role="region"
-                            aria-label="Liste gefälschter Bereiche"
+                            aria-label="Forged fields list"
                         >
                             {#each redItems as { line, index }}
                                 {@const color = "#fb7185"}
@@ -155,7 +155,7 @@
                                         )}
                                         onchange={() =>
                                             documentStore.toggleOcrWord(index)}
-                                        aria-label={`${line.text} auswählen`}
+                                        aria-label={`Select ${line.text}`}
                                     />
                                     <span class="word-text" title={line.text}
                                         >{line.text}</span
@@ -185,7 +185,7 @@
                                 {#if isYellowOpen}<ChevronDown
                                         size={14}
                                     />{:else}<ChevronRight size={14} />{/if}
-                                <span>Verdächtig</span>
+                                <span>Suspicious</span>
                                 <span class="count-badge yellow"
                                     >{yellowItems.length}</span
                                 >
@@ -202,8 +202,8 @@
                                 documentStore.toggleOcrWordsByType("WARNING");
                             }}
                             title={documentStore.isTypeFullySelected("WARNING")
-                                ? "Alle abwählen"
-                                : "Alle auswählen"}
+                                ? "Remove all"
+                                : "Select all"}
                         >
                             {#if documentStore.isTypeFullySelected("WARNING")}
                                 <CheckCircle2 size={18} />
@@ -217,7 +217,7 @@
                             id="accordion-yellow-content"
                             class="accordion-content"
                             role="region"
-                            aria-label="Liste verdächtiger Bereiche"
+                            aria-label="Suspicious fields list"
                         >
                             {#each yellowItems as { line, index }}
                                 {@const color = "#fde047"}
@@ -235,7 +235,7 @@
                                         )}
                                         onchange={() =>
                                             documentStore.toggleOcrWord(index)}
-                                        aria-label={`${line.text} auswählen`}
+                                        aria-label={`Select ${line.text}`}
                                     />
                                     <span class="word-text" title={line.text}
                                         >{line.text}</span
@@ -263,7 +263,7 @@
                                 {#if isGreenOpen}<ChevronDown
                                         size={14}
                                     />{:else}<ChevronRight size={14} />{/if}
-                                <span>Sicher</span>
+                                <span>Safe</span>
                                 <span class="count-badge green"
                                     >{greenItems.length}</span
                                 >
@@ -280,8 +280,8 @@
                                 documentStore.toggleOcrWordsByType("SAFE");
                             }}
                             title={documentStore.isTypeFullySelected("SAFE")
-                                ? "Alle abwählen"
-                                : "Alle auswählen"}
+                                ? "Remove all"
+                                : "Select all"}
                         >
                             {#if documentStore.isTypeFullySelected("SAFE")}
                                 <CheckCircle2 size={18} />
@@ -295,7 +295,7 @@
                             id="accordion-green-content"
                             class="accordion-content"
                             role="region"
-                            aria-label="Liste sicherer Bereiche"
+                            aria-label="Safe fields list"
                         >
                             {#each greenItems as { line, index }}
                                 {@const color = "#86efac"}
@@ -313,7 +313,7 @@
                                         )}
                                         onchange={() =>
                                             documentStore.toggleOcrWord(index)}
-                                        aria-label={`${line.text} auswählen`}
+                                        aria-label={`Select ${line.text}`}
                                     />
                                     <span class="word-text" title={line.text}
                                         >{line.text}</span

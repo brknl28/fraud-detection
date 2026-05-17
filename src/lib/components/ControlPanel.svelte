@@ -7,13 +7,13 @@
 	<div class="controls-container">
 		<div class="toggles-group">
 			<label class="toggle-switch">
-				<span class="toggle-label">Alle Bereiche anzeigen</span>
+				<span class="toggle-label">Show all fields</span>
 				<span class="switch">
 					<input
 						type="checkbox"
 						checked={documentStore.allAnomaliesVisible}
 						onchange={() => documentStore.toggleAllAnomalies()}
-						aria-label="Alle verdächtigen Bereiche anzeigen/ausblenden"
+						aria-label="Show/hide all suspicious fields"
 					/>
 					<span
 						class="slider"
@@ -23,13 +23,13 @@
 			</label>
 
 			<label class="toggle-switch">
-				<span class="toggle-label">OCR-Text</span>
+				<span class="toggle-label">OCR Text</span>
 				<span class="switch">
 					<input
 						type="checkbox"
 						checked={documentStore.ocrVisible}
 						onchange={() => documentStore.toggleOcr()}
-						aria-label="OCR-Text anzeigen/ausblenden"
+						aria-label="Show/hide OCR text"
 					/>
 					<span class="slider" class:active={documentStore.ocrVisible}
 					></span>
@@ -46,20 +46,20 @@
 					documentStore.ocrLines.length > 0}
 				onclick={() => documentStore.selectAllOcrWords()}
 				disabled={documentStore.ocrLines.length === 0}
-				aria-label="Alle auswählen"
+				aria-label="Select all"
 			>
 				<CheckSquare size={16} />
-				<span>Alle auswählen</span>
+				<span>Select all</span>
 			</button>
 			<button
 				type="button"
 				class="action-btn"
 				onclick={() => documentStore.deselectAllOcrWords()}
 				disabled={documentStore.selectedOcrWordIds.size === 0}
-				aria-label="Zurücksetzen"
+				aria-label="Reset"
 			>
 				<XSquare size={16} />
-				<span>Zurücksetzen</span>
+				<span>Reset</span>
 			</button>
 		</div>
 	</div>

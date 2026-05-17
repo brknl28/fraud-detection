@@ -67,12 +67,12 @@
 
 	function getTooltipText(severity: string): string {
 		if (severity === "DANGER") {
-			return "Dieser Bereich wurde als gefälscht erkannt. Es gibt Unstimmigkeiten bei Schriftart, Farbe oder Ausrichtung.";
+			return "This field was detected as forged. There are inconsistencies in font, color, or alignment.";
 		}
 		if (severity === "WARNING") {
-			return "Dieser Bereich wurde als verdächtig markiert. Manuelle Überprüfung empfohlen.";
+			return "This field was marked as suspicious. Manual review is recommended.";
 		}
-		return "Dieser Bereich wurde als sicher eingestuft.";
+		return "This field was classified as safe.";
 	}
 
 	function closeTooltip() {
@@ -109,7 +109,7 @@
 		class="ocr-overlay"
 		viewBox="0 0 {width} {height}"
 		preserveAspectRatio="xMidYMid meet"
-		aria-label="OCR-Textebene"
+		aria-label="OCR text layer"
 	>
 		{#each visibleLines as { line, idx }}
 			{@const x = line.x * width}
@@ -155,7 +155,7 @@
 						class:active={openTooltipIdx === idx}
 						role="button"
 						tabindex="0"
-						aria-label="Informationen anzeigen"
+						aria-label="Show info"
 						onclick={(e) => toggleTooltip(idx, severity, e)}
 						onkeydown={(e) => handleKeydown(idx, severity, e)}
 						style="cursor: pointer;"
@@ -245,12 +245,12 @@
 			{#if tooltipSeverity === "DANGER"}
 				<strong class="tooltip-title danger">
 					<AlertTriangle size={16} />
-					<span>Gefälschter Bereich</span>
+					<span>Forged Field</span>
 				</strong>
 			{:else}
 				<strong class="tooltip-title warning">
 					<AlertCircle size={16} />
-					<span>Verdächtiger Bereich</span>
+					<span>Suspicious Field</span>
 				</strong>
 			{/if}
 			<p>{getTooltipText(tooltipSeverity)}</p>
@@ -344,3 +344,5 @@
 		color: rgba(255, 255, 255, 0.9);
 	}
 </style>
+/style>
+

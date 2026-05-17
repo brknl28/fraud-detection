@@ -12,7 +12,7 @@
 		aria-pressed={documentStore.fraudMarked}
 	>
 		<AlertTriangle size={18} />
-		<span>Betrug</span>
+		<span>Forged</span>
 	</button>
 
 	<button
@@ -22,6 +22,6 @@
 		disabled={!documentStore.fraudMarked}
 	>
 		<ShieldCheck size={18} />
-		<span>Echt</span>
+		<span>Genuine</span>
 	</button>
 </div>

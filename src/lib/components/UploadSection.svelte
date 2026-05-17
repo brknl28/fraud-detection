@@ -43,27 +43,27 @@
 			if (file.type.startsWith("image/")) {
 				processFile(file);
 			} else {
-				alert("Bitte wählen Sie eine Bilddatei aus (JPG oder PNG)");
+				alert("Please select an image file (JPG or PNG)");
 			}
 		}
 	}
 
 	async function processFile(file: File) {
 		if (file.size > 10 * 1024 * 1024) {
-			alert("Datei ist zu groß. Maximale Größe ist 10MB.");
+			alert("File too large. Maximum size is 10MB.");
 			return;
 		}
 
 		if (!file.type.match(/^image\/(jpeg|png|jpg)$/)) {
 			alert(
-				"Nicht unterstütztes Dateiformat. Bitte JPG oder PNG hochladen.",
+				"Unsupported file format. Please upload JPG or PNG.",
 			);
 			return;
 		}
 
 		if (documentStore.isDuplicateDocument(file.name, file.size)) {
 			const confirmed = confirm(
-				`Ein Dokument mit dem Namen "${file.name}" existiert bereits.\n\nMöchten Sie fortfahren?`,
+				`A document named "${file.name}" already exists.\n\nDo you want to continue?`,
 			);
 			if (!confirmed) {
 				return;
@@ -86,7 +86,7 @@
 	type="file"
 	accept="image/jpeg,image/png,image/jpg"
 	onchange={handleFileChange}
-	aria-label="Dokumentenbild hochladen"
+	aria-label="Upload document image"
 	class="file-input"
 	disabled={documentStore.isProcessingUpload}
 />
@@ -100,14 +100,14 @@
 	ondragover={handleDragOver}
 	ondragleave={handleDragLeave}
 	ondrop={handleDrop}
-	aria-label="Datei auswählen oder hierher ziehen"
+	aria-label="Select file or drag here"
 	disabled={documentStore.isProcessingUpload}
 >
 	{#if documentStore.isProcessingUpload}
 		<Loader2 size={18} class="upload-icon spinning" />
-		<span class="upload-text">Wird verarbeitet...</span>
+		<span class="upload-text">Processing...</span>
 	{:else}
 		<Upload size={18} class="upload-icon" />
-		<span class="upload-text">Dokument hochladen</span>
+		<span class="upload-text">Upload Document</span>
 	{/if}
 </button>

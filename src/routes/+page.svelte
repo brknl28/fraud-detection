@@ -13,10 +13,10 @@
 </script>
 
 <svelte:head>
-	<title>Betrugserkennung</title>
+	<title>Fraud Detection</title>
 	<meta
 		name="description"
-		content="Dokumenten-Betrugserkennung und Verifizierungssystem"
+		content="Document fraud detection and verification system"
 	/>
 </svelte:head>
 
@@ -25,7 +25,7 @@
 		id="main-content"
 		class="document-section"
 		role="main"
-		aria-label="Dokumentenansicht"
+		aria-label="Document view"
 	>
 		<DocumentViewer />
 	</section>

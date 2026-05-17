@@ -1,30 +1,26 @@
 # Fraud Detection
 
+Document fraud detection and verification system built with **Svelte 5** and **Tailwind CSS**.
+
 ## Links
 * **Live Demo:** [fraud-detection-brknl28.vercel.app](https://fraud-detection-brknl28.vercel.app)
 
-## Projektübersicht
+## Features
 
-### Entwicklungsprozess und Details
-Ich habe das Projekt mit **Svelte 5** (neueste Version) und **Tailwind CSS** gestartet. Ich habe ein "One-Page"-Design mit einer Sidebar rechts gebaut.
+* **Document Viewer** — Pan and zoom document images with keyboard navigation
+* **OCR Analysis** — Text extraction from documents using **Tesseract.js**
+* **Fraud Detection** — Highlights forged and suspicious areas with color-coded overlays
+* **Trust Score** — Visual score ring evaluating document authenticity
+* **OCR Word List** — Browse extracted text grouped by severity (Forged / Suspicious / Safe)
+* **Accessibility** — Full keyboard controls and screen reader support
+* **Responsive** — Works on desktop and mobile
 
-**Hier sind die wichtigen Punkte, die ich umgesetzt habe:**
+## Tech Stack
 
-* **Der Viewer:** Ich habe einen Viewer gebaut, in dem man das Bild bewegen und zoomen kann (Pan & Zoom).
-* **Daten & OCR (Wichtig):** Ich habe zwei PDFs in PNG-Bilder umgewandelt. Um die Texte und Positionen zu finden, habe ich **Tesseract.js** benutzt.
-    * Das System liest den Text und erstellt daraus JSON-Daten mit Koordinaten.
-    * Es ist nicht perfekt, aber es funktioniert zu über **80% sehr gut**.
-    * *Erkenntnis:* Man kann auch nur mit Frontend eine einfache Betrugserkennung realisieren. Für einen professionellen Einsatz wäre jedoch ein Backend notwendig.
-* **Design:** Ich habe das Design an Ihre Firmenfarben und Schriftarten (**ICO-LUX**) angepasst, um ein professionelles Erscheinungsbild zu gewährleisten.
-* **Mobile & Desktop:** Die App ist schnell und stabil. Sie funktioniert auch auf dem Handy, der Fokus lag jedoch auf der Desktop-Version.
-* **Features:**
-    * **Accessibility:** Ich habe eine Tastatur-Steuerung eingebaut.
-    * **Betrugserkennung:** Es gibt Warnungen für falsche oder verdächtige Bereiche.
-    * **Steuerung:** Ein "Toggle-Button", um Overlays an- oder auszuschalten.
-    * **Score:** Ein "Punktestand", der die Genauigkeit bzw. das Risiko bewertet.
-
-**KI-Tools:**
-Wie in der Aufgabe erlaubt, habe ich KI benutzt. Ich habe Hilfe von **Claude** und **Google AI Tools** bekommen. Diese haben mir besonders bei der Planung und der Integration von Tesseract.js wertvolle Unterstützung geleistet.
+* **Svelte 5** with SvelteKit
+* **Tailwind CSS**
+* **Tesseract.js** for OCR
+* **Lucide** for icons
 
 ---
 

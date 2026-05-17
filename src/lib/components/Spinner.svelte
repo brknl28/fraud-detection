@@ -3,5 +3,5 @@
 
 <div class="spinner-container">
     <div class="spinner"></div>
-    <p>Analysiere...</p>
+    <p>Analyzing...</p>
 </div>

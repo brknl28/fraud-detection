@@ -32,9 +32,9 @@
     }
 
     function getStatusText(s: string) {
-        if (s === "SAFE") return "Sicher";
-        if (s === "CAUTION") return "Vorsicht";
-        return "Kritisch";
+        if (s === "SAFE") return "Safe";
+        if (s === "CAUTION") return "Caution";
+        return "Critical";
     }
 </script>
 
@@ -46,7 +46,7 @@
     onkeydown={(e) =>
         (e.key === "Enter" || e.key === " ") &&
         (e.preventDefault(), toggleExpand())}
-    aria-label="Vertrauenswertung - {score} Punkte, {getStatusText(status)}"
+    aria-label="Trust Score - {score} points, {getStatusText(status)}"
 >
     <div class="card-header">
         <div class="score-ring" style="--score-color: {getStatusColor(status)}">
@@ -72,7 +72,7 @@
             <div class="status-title" style="color: {getStatusColor(status)}">
                 {getStatusText(status)}
             </div>
-            <div class="status-subtitle">Vertrauenswert</div>
+            <div class="status-subtitle">Trust Score</div>
         </div>
     </div>
 </div>

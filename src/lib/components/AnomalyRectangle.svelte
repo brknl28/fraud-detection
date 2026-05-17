@@ -50,12 +50,12 @@
 
 	const tooltipText = $derived.by(() => {
 		if (severity === "DANGER") {
-			return "Dieser Bereich wurde als gefälscht erkannt. Es gibt Unstimmigkeiten bei Schriftart, Farbe oder Ausrichtung.";
+			return "This field was detected as forged. There are inconsistencies in font, color, or alignment.";
 		}
 		if (severity === "WARNING") {
-			return "Dieser Bereich wurde als verdächtig markiert. Manuelle Überprüfung empfohlen.";
+			return "This field was marked as suspicious. Manual review is recommended.";
 		}
-		return "Dieser Bereich wurde als sicher eingestuft.";
+		return "This field was classified as safe.";
 	});
 
 	const infoX = $derived(anomaly.x + anomaly.width - 12);
@@ -87,7 +87,7 @@
 		class:active={isChecked}
 		role="button"
 		tabindex="0"
-		aria-label="Anomaly {anomaly.id}: {anomaly.text}"
+		aria-label="Anomali {anomaly.id}: {anomaly.text}"
 		aria-pressed={isChecked}
 		onclick={handleClick}
 		onkeydown={handleKeydown}
@@ -103,7 +103,7 @@
 				class="info-button"
 				role="button"
 				tabindex="0"
-				aria-label="Informationen anzeigen"
+				aria-label="Show info"
 				onclick={handleInfoClick}
 				onkeydown={handleInfoKeydown}
 			/>
@@ -184,3 +184,4 @@
 		filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 	}
 </style>
+/style>

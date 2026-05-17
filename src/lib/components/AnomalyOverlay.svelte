@@ -17,7 +17,7 @@
 	class="svg-overlay"
 	viewBox="0 0 {width} {height}"
 	preserveAspectRatio="xMidYMid meet"
-	aria-label="Ebene für Anomalie-Hervorhebungen"
+	aria-label="Anomaly highlight layer"
 	role="img"
 >
 	{#each anomalies as anomaly (anomaly.id)}

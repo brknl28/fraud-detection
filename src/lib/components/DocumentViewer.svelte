@@ -282,7 +282,7 @@
 			<button
 				class="document-button"
 				onclick={() => documentStore.previousDocument()}
-				aria-label="Vorheriges Dokument"
+				aria-label="Previous document"
 			>
 				<ChevronLeft size={20} />
 			</button>
@@ -290,7 +290,7 @@
 			<button
 				class="document-button"
 				onclick={() => documentStore.nextDocument()}
-				aria-label="Nächstes Dokument"
+				aria-label="Sonraki belge"
 			>
 				<ChevronRight size={20} />
 			</button>
@@ -304,7 +304,7 @@
 		class:panning={isPanning}
 		bind:this={scrollContainer}
 		role="application"
-		aria-label="Dokumentenansicht - Verwenden Sie +/- zum Zoomen und die Pfeiltasten zum Navigieren"
+		aria-label="Document view - Use +/- to zoom and arrow keys to navigate"
 		tabindex="0"
 		onmousedown={handleMouseDown}
 		ontouchstart={handleTouchStart}
@@ -318,14 +318,14 @@
 			class:fraud-alert={documentStore.fraudMarked}
 			class:fit-center={fitMode === "contain"}
 			role="img"
-			aria-label="Dokumentenansicht mit Anomalie-Hervorhebungen"
+			aria-label="Document view with anomaly highlights"
 		>
 			{#if isDocumentLoading && !hasImage}
 				<div class="skeleton-container">
 					<Skeleton variant="image" width="100%" height="100%" />
 					<div class="skeleton-overlay">
 						<div class="loading-spinner"></div>
-						<span>Dokumente werden geladen...</span>
+						<span>Loading documents...</span>
 					</div>
 				</div>
 			{:else}
@@ -367,7 +367,7 @@
 					{:else}
 						<div class="no-document">
 							<FileText size={40} />
-							<p>Bitte laden Sie ein Dokument hoch</p>
+							<p>Please upload a document</p>
 						</div>
 					{/if}
 				</div>
@@ -408,7 +408,7 @@
 	{#if documentStore.isProcessingUpload}
 		<div class="processing-overlay">
 			<div class="loading-spinner"></div>
-			<span>OCR wird verarbeitet...</span>
+			<span>Processing OCR...</span>
 		</div>
 	{/if}
 </div>
