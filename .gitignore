@@ -21,3 +21,16 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# AI / agent tooling — not for upstream
+.kiro/
+.commandcode/
+.codex/
+.cursor/
+.vscode/
+.idea/
+.aider*
+.claude/
+.continue/
+CLAUDE.md
+AGENTS.md

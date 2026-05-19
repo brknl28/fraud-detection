@@ -52,31 +52,41 @@ class DocumentStore {
 		return this.ocrLines.filter((_, idx) => this.selectedOcrWordIds.has(idx));
 	}
 
+	private initPromise: Promise<void> | null = null;
+
 	async init() {
-		this.isLoading = true;
-		try {
-			const res = await fetch('/api/documents');
-			if (!res.ok) throw new Error('Failed to load documents');
-
-			const docs = await res.json();
-
-			this.documents = docs.map((doc: any) => ({
-				...doc,
-				anomalies: this.assignRandomSeverity(doc.anomalies || [])
-			}));
-
-			if (this.documents.length > 0) {
-
-				this.setDocument(this.documents[0].id);
-			} else {
-
-				console.warn('No documents returned from API');
-			}
-		} catch (err) {
-			console.error('Init Error:', err);
-		} finally {
+		if (this.initPromise) return this.initPromise;
+		if (this.documents.length > 0) {
 			this.isLoading = false;
+			return;
 		}
+
+		this.initPromise = (async () => {
+			this.isLoading = true;
+			try {
+				const res = await fetch('/api/documents');
+				if (!res.ok) throw new Error('Failed to load documents');
+
+				const docs = await res.json();
+
+				this.documents = docs.map((doc: any) => ({
+					...doc,
+					anomalies: this.assignAnomalySeverity(doc.anomalies || [])
+				}));
+
+				if (this.documents.length > 0 && !this.activeDocumentId) {
+					this.setDocument(this.documents[0].id);
+				} else if (this.documents.length === 0) {
+					console.warn('No documents returned from API');
+				}
+			} catch (err) {
+				console.error('Init Error:', err);
+			} finally {
+				this.isLoading = false;
+			}
+		})();
+
+		return this.initPromise;
 	}
 
 	rawOcrWords: any[] = [];
@@ -89,11 +99,11 @@ class DocumentStore {
 			const height = y1 - y0;
 			const width = x1 - x0;
 
-			let severity = 'SAFE';
-			const rand = Math.random();
-			if (rand > 0.8) {
+			const confidence = Number.isFinite(w.confidence) ? Number(w.confidence) : 100;
+			let severity: SeverityType = 'SAFE';
+			if (confidence < 50) {
 				severity = 'DANGER';
-			} else if (rand > 0.6) {
+			} else if (confidence < 80) {
 				severity = 'WARNING';
 			}
 
@@ -106,6 +116,7 @@ class DocumentStore {
 				height: height / this.imageNaturalHeight,
 
 				fontSize: height / this.imageNaturalHeight,
+				confidence,
 				severity
 			};
 		});
@@ -142,7 +153,7 @@ class DocumentStore {
 	}
 
 	get fraudScore(): number {
-		if (this.anomalies.length === 0 && this.ocrLines.length === 0) return 98.5;
+		if (this.anomalies.length === 0 && this.ocrLines.length === 0) return 100;
 
 		let deduction = 0;
 
@@ -158,8 +169,7 @@ class DocumentStore {
 			else if (severity === 'WARNING') deduction += 1;
 		}
 
-		const jitter = Math.random() * 0.5;
-		const baseScore = Math.max(0, 100 - deduction - jitter);
+		const baseScore = Math.max(0, 100 - deduction);
 
 		return Number(baseScore.toFixed(1));
 	}
@@ -171,15 +181,9 @@ class DocumentStore {
 		return 'CRITICAL';
 	}
 
-	private assignRandomSeverity(anomalies: Anomaly[]) {
+	private assignAnomalySeverity(anomalies: Anomaly[]) {
 		return anomalies.map((a) => {
-			let severity = 'SAFE';
-			const rand = Math.random();
-			if (rand > 0.6) {
-				severity = 'DANGER';
-			} else if (rand > 0.3) {
-				severity = 'WARNING';
-			}
+			const severity = a.severity ?? (a.type === 'forged' ? 'DANGER' : 'WARNING');
 			return {
 				...a,
 				severity
@@ -377,7 +381,7 @@ class DocumentStore {
 
 
 			this.ocrText = ocrData.fullText || '';
-			this.anomalies = this.assignRandomSeverity(ocrData.anomalies || []);
+			this.anomalies = this.assignAnomalySeverity(ocrData.anomalies || []);
 
 			if (ocrData.words) {
 				this.rawOcrWords = ocrData.words;

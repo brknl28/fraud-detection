@@ -1,66 +1,83 @@
 <script lang="ts">
-	import { documentStore } from "$lib/stores/document.svelte";
-	import { CheckSquare, XSquare } from "lucide-svelte";
+	import { untrack } from 'svelte';
+	import { documentStore } from '$lib/stores/document.svelte';
+	import {
+		Version26List,
+		Version26ListRow,
+		Version26ListRowToggleTrailing,
+		Version26Button,
+	} from 'apple-svelte';
+
+	let fieldsToggle = $state<'on' | 'off'>(
+		documentStore.allAnomaliesVisible ? 'on' : 'off',
+	);
+	let ocrToggle = $state<'on' | 'off'>(documentStore.ocrVisible ? 'on' : 'off');
+
+	$effect(() => {
+		const desired = fieldsToggle === 'on';
+		untrack(() => {
+			if (desired !== documentStore.allAnomaliesVisible) {
+				documentStore.toggleAllAnomalies();
+			}
+		});
+	});
+
+	$effect(() => {
+		const desired = ocrToggle === 'on';
+		untrack(() => {
+			if (desired !== documentStore.ocrVisible) {
+				documentStore.toggleOcr();
+			}
+		});
+	});
 </script>
 
-<div class="side-panel control-panel">
-	<div class="controls-container">
-		<div class="toggles-group">
-			<label class="toggle-switch">
-				<span class="toggle-label">Show all fields</span>
-				<span class="switch">
-					<input
-						type="checkbox"
-						checked={documentStore.allAnomaliesVisible}
-						onchange={() => documentStore.toggleAllAnomalies()}
-						aria-label="Show/hide all suspicious fields"
-					/>
-					<span
-						class="slider"
-						class:active={documentStore.allAnomaliesVisible}
-					></span>
-				</span>
-			</label>
+<div class="control-panel">
+	<Version26List>
+		<Version26ListRow title="Show all fields">
+			<svelte:fragment slot="trailing">
+				<Version26ListRowToggleTrailing bind:state={fieldsToggle} showAccentColor={true} />
+			</svelte:fragment>
+		</Version26ListRow>
+		<Version26ListRow title="OCR Text">
+			<svelte:fragment slot="trailing">
+				<Version26ListRowToggleTrailing bind:state={ocrToggle} showAccentColor={true} />
+			</svelte:fragment>
+		</Version26ListRow>
+	</Version26List>
 
-			<label class="toggle-switch">
-				<span class="toggle-label">OCR Text</span>
-				<span class="switch">
-					<input
-						type="checkbox"
-						checked={documentStore.ocrVisible}
-						onchange={() => documentStore.toggleOcr()}
-						aria-label="Show/hide OCR text"
-					/>
-					<span class="slider" class:active={documentStore.ocrVisible}
-					></span>
-				</span>
-			</label>
-		</div>
-
-		<div class="actions-group">
-			<button
-				type="button"
-				class="action-btn"
-				class:active={documentStore.selectedOcrWordIds.size ===
-					documentStore.ocrLines.length &&
-					documentStore.ocrLines.length > 0}
-				onclick={() => documentStore.selectAllOcrWords()}
-				disabled={documentStore.ocrLines.length === 0}
-				aria-label="Select all"
-			>
-				<CheckSquare size={16} />
-				<span>Select all</span>
-			</button>
-			<button
-				type="button"
-				class="action-btn"
-				onclick={() => documentStore.deselectAllOcrWords()}
-				disabled={documentStore.selectedOcrWordIds.size === 0}
-				aria-label="Reset"
-			>
-				<XSquare size={16} />
-				<span>Reset</span>
-			</button>
-		</div>
+	<div class="actions">
+		<Version26Button
+			labelType="symbol-and-text"
+			symbol="check_box"
+			label="Select all"
+			size="small"
+			onPress={() => documentStore.selectAllOcrWords()}
+		/>
+		<Version26Button
+			labelType="symbol-and-text"
+			symbol="disabled_by_default"
+			label="Reset"
+			size="small"
+			onPress={() => documentStore.deselectAllOcrWords()}
+		/>
 	</div>
 </div>
+
+<style>
+	.control-panel {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.actions {
+		display: flex;
+		gap: 8px;
+	}
+
+	.actions :global(button) {
+		flex: 1;
+		justify-content: center;
+	}
+</style>

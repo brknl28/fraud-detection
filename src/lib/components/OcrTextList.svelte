@@ -1,329 +1,410 @@
 <script lang="ts">
-    import { documentStore } from "$lib/stores/document.svelte";
-    import {
-        ChevronDown,
-        ChevronRight,
-        Eye,
-        EyeOff,
-        CheckCircle2,
-        Circle,
-    } from "lucide-svelte";
+	import { documentStore } from '$lib/stores/document.svelte';
+	import {
+		Version26SegmentedControl,
+		Version26SegmentedControlButton,
+		Version26List,
+		Version26ListRow,
+	} from 'apple-svelte';
+	import Symbol from './Symbol.svelte';
 
-    let isRedOpen = $state(true);
-    let isYellowOpen = $state(true);
-    let isGreenOpen = $state(false);
+	type Severity = 'DANGER' | 'WARNING' | 'SAFE';
 
-    let redItems = $derived(
-        documentStore.ocrLines
-            .map((line, index) => ({ line, index }))
-            .filter(
-                (item) =>
-                    (item.line as any).severity === "DANGER" ||
-                    (item.line as any).category === "critical",
-            ),
-    );
-    let yellowItems = $derived(
-        documentStore.ocrLines
-            .map((line, index) => ({ line, index }))
-            .filter(
-                (item) =>
-                    !(
-                        (item.line as any).severity === "DANGER" ||
-                        (item.line as any).category === "critical"
-                    ) && (item.line as any).severity !== "SAFE",
-            ),
-    );
-    let greenItems = $derived(
-        documentStore.ocrLines
-            .map((line, index) => ({ line, index }))
-            .filter((item) => (item.line as any).severity === "SAFE"),
-    );
+	let isRedOpen = $state(true);
+	let isYellowOpen = $state(true);
+	let isGreenOpen = $state(false);
 
-    function toggleRed() {
-        isRedOpen = !isRedOpen;
-    }
-    function toggleYellow() {
-        isYellowOpen = !isYellowOpen;
-    }
-    function toggleGreen() {
-        isGreenOpen = !isGreenOpen;
-    }
+	let redItems = $derived(
+		documentStore.ocrLines
+			.map((line, index) => ({ line, index }))
+			.filter(
+				(item) =>
+					((item.line as any).severity === 'DANGER' ||
+						(item.line as any).category === 'critical'),
+			),
+	);
+	let yellowItems = $derived(
+		documentStore.ocrLines
+			.map((line, index) => ({ line, index }))
+			.filter(
+				(item) =>
+					!(
+						(item.line as any).severity === 'DANGER' ||
+						(item.line as any).category === 'critical'
+					) && (item.line as any).severity !== 'SAFE',
+			),
+	);
+	let greenItems = $derived(
+		documentStore.ocrLines
+			.map((line, index) => ({ line, index }))
+			.filter((item) => (item.line as any).severity === 'SAFE'),
+	);
+
+	function severityColor(severity: Severity) {
+		if (severity === 'DANGER') return 'var(--colors-red)';
+		if (severity === 'WARNING') return 'var(--colors-yellow)';
+		return 'var(--colors-green)';
+	}
+
+	function severityLabel(severity: Severity) {
+		if (severity === 'DANGER') return 'Forged';
+		if (severity === 'WARNING') return 'Suspicious';
+		return 'Safe';
+	}
+
+	function severityIcon(severity: Severity) {
+		if (severity === 'DANGER') return 'warning';
+		if (severity === 'WARNING') return 'info';
+		return 'check_circle';
+	}
+
+	function setFieldsVisible(value: boolean) {
+		if (value !== documentStore.allAnomaliesVisible) {
+			documentStore.toggleAllAnomalies();
+		}
+	}
+
+	function setOcrVisible(value: boolean) {
+		if (value !== documentStore.ocrVisible) {
+			documentStore.toggleOcr();
+		}
+	}
 </script>
 
-<div class="quick-controls">
-    <button
-        type="button"
-        class="control-chip"
-        class:active={documentStore.allAnomaliesVisible}
-        onclick={() => documentStore.toggleAllAnomalies()}
-        title="Show all fields"
-    >
-        {#if documentStore.allAnomaliesVisible}
-            <Eye size={14} />
-        {:else}
-            <EyeOff size={14} />
-        {/if}
-        <span>Fields</span>
-    </button>
+<div class="ocr-panel">
+	<Version26SegmentedControl>
+		<Version26SegmentedControlButton
+			label="Fields"
+			state={documentStore.allAnomaliesVisible ? 'selected' : 'default'}
+			onPress={() => setFieldsVisible(!documentStore.allAnomaliesVisible)}
+		/>
+		<Version26SegmentedControlButton
+			label="OCR Text"
+			state={documentStore.ocrVisible ? 'selected' : 'default'}
+			onPress={() => setOcrVisible(!documentStore.ocrVisible)}
+		/>
+	</Version26SegmentedControl>
 
-    <button
-        type="button"
-        class="control-chip"
-        class:active={documentStore.ocrVisible}
-        onclick={() => documentStore.toggleOcr()}
-        title="Show OCR text"
-    >
-        {#if documentStore.ocrVisible}
-            <Eye size={14} />
-        {:else}
-            <EyeOff size={14} />
-        {/if}
-        <span>OCR</span>
-    </button>
+	<div class="words-scroll" role="list" aria-label="OCR word list">
+		{#if documentStore.ocrLines.length === 0}
+			<p class="empty-state">No OCR data found</p>
+		{:else}
+			{#if redItems.length > 0}
+				<section class="severity-section">
+					<div class="severity-header" style:--severity-color="var(--colors-red)">
+						<button
+							type="button"
+							class="header-trigger"
+							onclick={() => (isRedOpen = !isRedOpen)}
+							aria-expanded={isRedOpen}
+						>
+							<div class="header-left">
+								<Symbol
+									name={isRedOpen ? 'expand_more' : 'chevron_right'}
+									size="small"
+									color="var(--colors-red)"
+								/>
+								<span class="severity-title">{severityLabel('DANGER')}</span>
+								<span class="count-badge">{redItems.length}</span>
+							</div>
+						</button>
+						<button
+							type="button"
+							class="select-all-btn"
+							onclick={() => documentStore.toggleOcrWordsByType('DANGER')}
+							aria-label={documentStore.isTypeFullySelected('DANGER')
+								? 'Deselect all forged'
+								: 'Select all forged'}
+						>
+							<Symbol
+								name={documentStore.isTypeFullySelected('DANGER')
+									? 'check_circle'
+									: 'radio_button_unchecked'}
+								size="small"
+								color="var(--colors-red)"
+							/>
+						</button>
+					</div>
+
+					{#if isRedOpen}
+						<Version26List>
+							{#each redItems as { line, index } (index)}
+								{@const checked = documentStore.isOcrWordSelected(index)}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_static_element_interactions -->
+								<div
+									class="ocr-row-wrapper"
+									role="button"
+									tabindex="0"
+									aria-pressed={checked}
+									aria-label={`Select ${line.text}`}
+									onclick={() => documentStore.toggleOcrWord(index)}
+									onkeydown={(e) => {
+										if (e.key === 'Enter' || e.key === ' ') {
+											e.preventDefault();
+											documentStore.toggleOcrWord(index);
+										}
+									}}
+								>
+									<Version26ListRow
+										title={line.text}
+										showEditButton={true}
+										editButtonType="checkmark"
+										checkmarkEditButtonState={checked ? 'selected' : 'default'}
+									>
+										<svelte:fragment slot="trailing">
+											<Symbol
+												name={severityIcon('DANGER')}
+												size="small"
+												color="var(--colors-red)"
+											/>
+										</svelte:fragment>
+									</Version26ListRow>
+								</div>
+							{/each}
+						</Version26List>
+					{/if}
+				</section>
+			{/if}
+
+			{#if yellowItems.length > 0}
+				<section class="severity-section">
+					<div class="severity-header" style:--severity-color="var(--colors-yellow)">
+						<button
+							type="button"
+							class="header-trigger"
+							onclick={() => (isYellowOpen = !isYellowOpen)}
+							aria-expanded={isYellowOpen}
+						>
+							<div class="header-left">
+								<Symbol
+									name={isYellowOpen ? 'expand_more' : 'chevron_right'}
+									size="small"
+									color="var(--colors-yellow)"
+								/>
+								<span class="severity-title">{severityLabel('WARNING')}</span>
+								<span class="count-badge">{yellowItems.length}</span>
+							</div>
+						</button>
+						<button
+							type="button"
+							class="select-all-btn"
+							onclick={() => documentStore.toggleOcrWordsByType('WARNING')}
+							aria-label={documentStore.isTypeFullySelected('WARNING')
+								? 'Deselect all suspicious'
+								: 'Select all suspicious'}
+						>
+							<Symbol
+								name={documentStore.isTypeFullySelected('WARNING')
+									? 'check_circle'
+									: 'radio_button_unchecked'}
+								size="small"
+								color="var(--colors-yellow)"
+							/>
+						</button>
+					</div>
+
+					{#if isYellowOpen}
+						<Version26List>
+							{#each yellowItems as { line, index } (index)}
+								{@const checked = documentStore.isOcrWordSelected(index)}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_static_element_interactions -->
+								<div
+									class="ocr-row-wrapper"
+									role="button"
+									tabindex="0"
+									aria-pressed={checked}
+									aria-label={`Select ${line.text}`}
+									onclick={() => documentStore.toggleOcrWord(index)}
+									onkeydown={(e) => {
+										if (e.key === 'Enter' || e.key === ' ') {
+											e.preventDefault();
+											documentStore.toggleOcrWord(index);
+										}
+									}}
+								>
+									<Version26ListRow
+										title={line.text}
+										showEditButton={true}
+										editButtonType="checkmark"
+										checkmarkEditButtonState={checked ? 'selected' : 'default'}
+									>
+										<svelte:fragment slot="trailing">
+											<Symbol
+												name={severityIcon('WARNING')}
+												size="small"
+												color="var(--colors-yellow)"
+											/>
+										</svelte:fragment>
+									</Version26ListRow>
+								</div>
+							{/each}
+						</Version26List>
+					{/if}
+				</section>
+			{/if}
+
+			{#if greenItems.length > 0}
+				<section class="severity-section">
+					<div class="severity-header" style:--severity-color="var(--colors-green)">
+						<button
+							type="button"
+							class="header-trigger"
+							onclick={() => (isGreenOpen = !isGreenOpen)}
+							aria-expanded={isGreenOpen}
+						>
+							<div class="header-left">
+								<Symbol
+									name={isGreenOpen ? 'expand_more' : 'chevron_right'}
+									size="small"
+									color="var(--colors-green)"
+								/>
+								<span class="severity-title">{severityLabel('SAFE')}</span>
+								<span class="count-badge">{greenItems.length}</span>
+							</div>
+						</button>
+						<button
+							type="button"
+							class="select-all-btn"
+							onclick={() => documentStore.toggleOcrWordsByType('SAFE')}
+							aria-label={documentStore.isTypeFullySelected('SAFE')
+								? 'Deselect all safe'
+								: 'Select all safe'}
+						>
+							<Symbol
+								name={documentStore.isTypeFullySelected('SAFE')
+									? 'check_circle'
+									: 'radio_button_unchecked'}
+								size="small"
+								color="var(--colors-green)"
+							/>
+						</button>
+					</div>
+
+					{#if isGreenOpen}
+						<Version26List>
+							{#each greenItems as { line, index } (index)}
+								{@const checked = documentStore.isOcrWordSelected(index)}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_static_element_interactions -->
+								<div
+									class="ocr-row-wrapper"
+									role="button"
+									tabindex="0"
+									aria-pressed={checked}
+									aria-label={`Select ${line.text}`}
+									onclick={() => documentStore.toggleOcrWord(index)}
+									onkeydown={(e) => {
+										if (e.key === 'Enter' || e.key === ' ') {
+											e.preventDefault();
+											documentStore.toggleOcrWord(index);
+										}
+									}}
+								>
+									<Version26ListRow
+										title={line.text}
+										showEditButton={true}
+										editButtonType="checkmark"
+										checkmarkEditButtonState={checked ? 'selected' : 'default'}
+									>
+										<svelte:fragment slot="trailing">
+											<Symbol
+												name={severityIcon('SAFE')}
+												size="small"
+												color="var(--colors-green)"
+											/>
+										</svelte:fragment>
+									</Version26ListRow>
+								</div>
+							{/each}
+						</Version26List>
+					{/if}
+				</section>
+			{/if}
+		{/if}
+	</div>
 </div>
 
-<div class="ocr-words-container" role="list" aria-label="OCR word list">
-    {#if documentStore.ocrLines.length === 0}
-        <p class="empty-state">No OCR data found</p>
-    {:else}
-        <div class="ocr-sections">
-            {#if redItems.length > 0}
-                <div class="accordion-section">
-                    <div
-                        class="accordion-header-row red"
-                        class:active={documentStore.isTypeFullySelected(
-                            "DANGER",
-                        )}
-                    >
-                        <button
-                            class="accordion-header red"
-                            onclick={toggleRed}
-                            aria-expanded={isRedOpen}
-                            aria-controls="accordion-red-content"
-                        >
-                            <div class="header-left">
-                                {#if isRedOpen}<ChevronDown
-                                        size={14}
-                                    />{:else}<ChevronRight size={14} />{/if}
-                                <span>Forged</span>
-                                <span class="count-badge red"
-                                    >{redItems.length}</span
-                                >
-                            </div>
-                        </button>
-                        <button
-                            type="button"
-                            class="toggle-type-btn red"
-                            class:active={documentStore.isTypeFullySelected(
-                                "DANGER",
-                            )}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                documentStore.toggleOcrWordsByType("DANGER");
-                            }}
-                            title={documentStore.isTypeFullySelected("DANGER")
-                                ? "Remove all"
-                                : "Select all"}
-                        >
-                            {#if documentStore.isTypeFullySelected("DANGER")}
-                                <CheckCircle2 size={18} />
-                            {:else}
-                                <Circle size={18} />
-                            {/if}
-                        </button>
-                    </div>
-                    {#if isRedOpen}
-                        <div
-                            id="accordion-red-content"
-                            class="accordion-content"
-                            role="region"
-                            aria-label="Forged fields list"
-                        >
-                            {#each redItems as { line, index }}
-                                {@const color = "#fb7185"}
-                                <label
-                                    class="ocr-word-row"
-                                    class:selected={documentStore.isOcrWordSelected(
-                                        index,
-                                    )}
-                                    style="--severity-color: {color};"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={documentStore.isOcrWordSelected(
-                                            index,
-                                        )}
-                                        onchange={() =>
-                                            documentStore.toggleOcrWord(index)}
-                                        aria-label={`Select ${line.text}`}
-                                    />
-                                    <span class="word-text" title={line.text}
-                                        >{line.text}</span
-                                    >
-                                </label>
-                            {/each}
-                        </div>
-                    {/if}
-                </div>
-            {/if}
+<style>
+	.ocr-panel {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		flex: 1;
+		min-height: 0;
+	}
 
-            {#if yellowItems.length > 0}
-                <div class="accordion-section">
-                    <div
-                        class="accordion-header-row yellow"
-                        class:active={documentStore.isTypeFullySelected(
-                            "WARNING",
-                        )}
-                    >
-                        <button
-                            class="accordion-header yellow"
-                            onclick={toggleYellow}
-                            aria-expanded={isYellowOpen}
-                            aria-controls="accordion-yellow-content"
-                        >
-                            <div class="header-left">
-                                {#if isYellowOpen}<ChevronDown
-                                        size={14}
-                                    />{:else}<ChevronRight size={14} />{/if}
-                                <span>Suspicious</span>
-                                <span class="count-badge yellow"
-                                    >{yellowItems.length}</span
-                                >
-                            </div>
-                        </button>
-                        <button
-                            type="button"
-                            class="toggle-type-btn yellow"
-                            class:active={documentStore.isTypeFullySelected(
-                                "WARNING",
-                            )}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                documentStore.toggleOcrWordsByType("WARNING");
-                            }}
-                            title={documentStore.isTypeFullySelected("WARNING")
-                                ? "Remove all"
-                                : "Select all"}
-                        >
-                            {#if documentStore.isTypeFullySelected("WARNING")}
-                                <CheckCircle2 size={18} />
-                            {:else}
-                                <Circle size={18} />
-                            {/if}
-                        </button>
-                    </div>
-                    {#if isYellowOpen}
-                        <div
-                            id="accordion-yellow-content"
-                            class="accordion-content"
-                            role="region"
-                            aria-label="Suspicious fields list"
-                        >
-                            {#each yellowItems as { line, index }}
-                                {@const color = "#fde047"}
-                                <label
-                                    class="ocr-word-row"
-                                    class:selected={documentStore.isOcrWordSelected(
-                                        index,
-                                    )}
-                                    style="--severity-color: {color};"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={documentStore.isOcrWordSelected(
-                                            index,
-                                        )}
-                                        onchange={() =>
-                                            documentStore.toggleOcrWord(index)}
-                                        aria-label={`Select ${line.text}`}
-                                    />
-                                    <span class="word-text" title={line.text}
-                                        >{line.text}</span
-                                    >
-                                </label>
-                            {/each}
-                        </div>
-                    {/if}
-                </div>
-            {/if}
+	.words-scroll {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
 
-            {#if greenItems.length > 0}
-                <div class="accordion-section">
-                    <div
-                        class="accordion-header-row green"
-                        class:active={documentStore.isTypeFullySelected("SAFE")}
-                    >
-                        <button
-                            class="accordion-header green"
-                            onclick={toggleGreen}
-                            aria-expanded={isGreenOpen}
-                            aria-controls="accordion-green-content"
-                        >
-                            <div class="header-left">
-                                {#if isGreenOpen}<ChevronDown
-                                        size={14}
-                                    />{:else}<ChevronRight size={14} />{/if}
-                                <span>Safe</span>
-                                <span class="count-badge green"
-                                    >{greenItems.length}</span
-                                >
-                            </div>
-                        </button>
-                        <button
-                            type="button"
-                            class="toggle-type-btn green"
-                            class:active={documentStore.isTypeFullySelected(
-                                "SAFE",
-                            )}
-                            onclick={(e) => {
-                                e.stopPropagation();
-                                documentStore.toggleOcrWordsByType("SAFE");
-                            }}
-                            title={documentStore.isTypeFullySelected("SAFE")
-                                ? "Remove all"
-                                : "Select all"}
-                        >
-                            {#if documentStore.isTypeFullySelected("SAFE")}
-                                <CheckCircle2 size={18} />
-                            {:else}
-                                <Circle size={18} />
-                            {/if}
-                        </button>
-                    </div>
-                    {#if isGreenOpen}
-                        <div
-                            id="accordion-green-content"
-                            class="accordion-content"
-                            role="region"
-                            aria-label="Safe fields list"
-                        >
-                            {#each greenItems as { line, index }}
-                                {@const color = "#86efac"}
-                                <label
-                                    class="ocr-word-row"
-                                    class:selected={documentStore.isOcrWordSelected(
-                                        index,
-                                    )}
-                                    style="--severity-color: {color};"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={documentStore.isOcrWordSelected(
-                                            index,
-                                        )}
-                                        onchange={() =>
-                                            documentStore.toggleOcrWord(index)}
-                                        aria-label={`Select ${line.text}`}
-                                    />
-                                    <span class="word-text" title={line.text}
-                                        >{line.text}</span
-                                    >
-                                </label>
-                            {/each}
-                        </div>
-                    {/if}
-                </div>
-            {/if}
-        </div>
-    {/if}
-</div>
+	.severity-section {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.severity-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		padding: 8px 12px;
+		background: var(--bg-grouped-secondary);
+		border: 0.5px solid var(--separators-non-opaque);
+		border-radius: 14px;
+		color: var(--severity-color, var(--labels-primary));
+	}
+
+	.header-trigger {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		background: transparent;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		color: inherit;
+	}
+
+	.header-left {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.severity-title {
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--severity-color, var(--labels-primary));
+	}
+
+	.count-badge {
+		font-size: 11px;
+		font-weight: 600;
+		padding: 2px 8px;
+		border-radius: 10px;
+		background: color-mix(in srgb, var(--severity-color, var(--labels-tertiary)) 18%, transparent);
+		color: var(--severity-color, var(--labels-secondary));
+	}
+
+	.select-all-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		padding: 2px;
+	}
+
+	.ocr-row-wrapper {
+		cursor: pointer;
+	}
+</style>

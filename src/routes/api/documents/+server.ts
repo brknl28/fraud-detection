@@ -1,8 +1,16 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-const images = import.meta.glob('/src/lib/assets/documents/*.{png,jpg,jpeg}', { eager: true, as: 'url' });
-const jsonFiles = import.meta.glob('/src/lib/assets/documents/*.json', { eager: true, as: 'raw' });
+const images = import.meta.glob('/src/lib/assets/documents/*.{png,jpg,jpeg}', {
+    eager: true,
+    query: '?url',
+    import: 'default'
+});
+const jsonFiles = import.meta.glob('/src/lib/assets/documents/*.json', {
+    eager: true,
+    query: '?raw',
+    import: 'default'
+});
 
 export const GET: RequestHandler = async () => {
     try {
@@ -22,7 +30,7 @@ export const GET: RequestHandler = async () => {
 
                     anomalies = (ocrData.anomalies || []).map((a: any) => ({
                         ...a,
-                        type: a.type || (Math.random() > 0.5 ? 'original' : 'forged')
+                        type: a.type || 'original'
                     }));
 
                     if (ocrData.anomalies?.some((a: any) => !a.type)) {

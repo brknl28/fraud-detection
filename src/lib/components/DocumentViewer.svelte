@@ -1,18 +1,17 @@
 <script lang="ts">
-	import { documentStore } from "$lib/stores/document.svelte";
-	import AnomalyOverlay from "./AnomalyOverlay.svelte";
-	import OcrOverlay from "./OcrOverlay.svelte";
-	import Skeleton from "./Skeleton.svelte";
+	import { documentStore } from '$lib/stores/document.svelte';
 	import {
-		ChevronLeft,
-		ChevronRight,
-		Minus,
-		Plus,
-		MoveHorizontal,
-		MoveVertical,
-		FileText,
-	} from "lucide-svelte";
-	import { onMount, onDestroy } from "svelte";
+		Version26ToolbarButton,
+		Version26SegmentedControl,
+		Version26SegmentedControlButton,
+		RegularProgressIndicator,
+	} from 'apple-svelte';
+	import AnomalyOverlay from './AnomalyOverlay.svelte';
+	import OcrOverlay from './OcrOverlay.svelte';
+	import Skeleton from './Skeleton.svelte';
+	import Symbol from './Symbol.svelte';
+	import { onMount } from 'svelte';
+
 	let isDocumentLoading = $derived(
 		documentStore.isLoading || documentStore.isProcessingUpload,
 	);
@@ -21,7 +20,7 @@
 	let imageElement = $state<HTMLImageElement>();
 	let scrollContainer = $state<HTMLDivElement>();
 	let zoomLevel = $state(1);
-	let fitMode = $state<"contain" | "width" | "manual">("contain");
+	let fitMode = $state<'contain' | 'width' | 'manual'>('contain');
 	let displayBaseScale = $state(1);
 
 	let isPanning = $state(false);
@@ -32,12 +31,14 @@
 	let initialPinchDistance = $state(0);
 	let initialZoom = $state(1);
 	let resizeObserver: ResizeObserver;
-	const zoomFactor = 1.2;
 	const minZoomPercent = 0.5;
 	const maxZoomPercent = 3.0;
 
 	let minZoom = $derived(displayBaseScale * minZoomPercent);
 	let maxZoom = $derived(displayBaseScale * maxZoomPercent);
+
+	let canPrev = $derived(documentStore.documents.length > 1);
+	let canNext = $derived(documentStore.documents.length > 1);
 
 	function updateZoomForFitMode() {
 		if (
@@ -55,13 +56,12 @@
 
 		let targetZoom = 1;
 
-		if (fitMode === "contain") {
+		if (fitMode === 'contain') {
 			const scaleX = availWidth / documentStore.imageNaturalWidth;
 			const scaleY = availHeight / documentStore.imageNaturalHeight;
 			targetZoom = Math.min(scaleX, scaleY);
-
 			displayBaseScale = targetZoom;
-		} else if (fitMode === "width") {
+		} else if (fitMode === 'width') {
 			targetZoom = availWidth / documentStore.imageNaturalWidth;
 		}
 
@@ -74,15 +74,13 @@
 				imageElement.naturalWidth,
 				imageElement.naturalHeight,
 			);
-
-			fitMode = "contain";
-
+			fitMode = 'contain';
 			updateZoomForFitMode();
 		}
 	}
 
 	function setManualMode() {
-		fitMode = "manual";
+		fitMode = 'manual';
 	}
 
 	function percentToZoom(percent: number): number {
@@ -97,29 +95,19 @@
 	function zoomIn() {
 		setManualMode();
 		const currentPercent = getDisplayPercentage();
-		const roundedPercent = roundToNearestTen(currentPercent);
-		const targetPercent = roundedPercent + 10;
-
-		const targetZoom = percentToZoom(targetPercent);
-		zoomLevel = Math.min(targetZoom, maxZoom);
+		const targetPercent = roundToNearestTen(currentPercent) + 10;
+		zoomLevel = Math.min(percentToZoom(targetPercent), maxZoom);
 	}
 
 	function zoomOut() {
 		setManualMode();
 		const currentPercent = getDisplayPercentage();
-		const roundedPercent = roundToNearestTen(currentPercent);
-		const targetPercent = roundedPercent - 10;
-
-		const targetZoom = percentToZoom(targetPercent);
-		zoomLevel = Math.max(targetZoom, minZoom);
+		const targetPercent = roundToNearestTen(currentPercent) - 10;
+		zoomLevel = Math.max(percentToZoom(targetPercent), minZoom);
 	}
 
-	function toggleFit() {
-		if (fitMode === "contain") {
-			fitMode = "width";
-		} else {
-			fitMode = "contain";
-		}
+	function setFitMode(mode: 'contain' | 'width') {
+		fitMode = mode;
 		updateZoomForFitMode();
 	}
 
@@ -136,15 +124,13 @@
 
 		const target = e.target as HTMLElement | SVGElement;
 		const isInteractiveElement =
-			target.closest(".info-button") ||
-			target.closest(".info-button-group") ||
+			target.closest('.info-button') ||
+			target.closest('.info-button-group') ||
 			target.closest('[role="button"]') ||
-			target.tagName === "circle" ||
-			(target as SVGElement).classList?.contains("info-button");
+			target.tagName === 'circle' ||
+			(target as SVGElement).classList?.contains('info-button');
 
-		if (isInteractiveElement) {
-			return;
-		}
+		if (isInteractiveElement) return;
 
 		e.preventDefault();
 		isPanning = true;
@@ -157,20 +143,14 @@
 
 	function handleGlobalMouseMove(e: MouseEvent) {
 		if (!isPanning || !scrollContainer) return;
-
 		const dx = e.clientX - startX;
 		const dy = e.clientY - startY;
 		const distance = Math.sqrt(dx * dx + dy * dy);
-
-		if (!hasPanStarted && distance < panThreshold) {
-			return;
-		}
-
+		if (!hasPanStarted && distance < panThreshold) return;
 		if (!hasPanStarted) {
 			hasPanStarted = true;
-			scrollContainer.style.cursor = "grabbing";
+			scrollContainer.style.cursor = 'grabbing';
 		}
-
 		e.preventDefault();
 		scrollContainer.scrollLeft = scrollLeft - dx;
 		scrollContainer.scrollTop = scrollTop - dy;
@@ -179,9 +159,7 @@
 	function handleGlobalMouseUp() {
 		isPanning = false;
 		hasPanStarted = false;
-		if (scrollContainer) {
-			scrollContainer.style.cursor = "grab";
-		}
+		if (scrollContainer) scrollContainer.style.cursor = 'grab';
 	}
 
 	function getDistance(touches: TouchList) {
@@ -203,97 +181,82 @@
 			e.preventDefault();
 			const currentDistance = getDistance(e.touches);
 			const scale = currentDistance / initialPinchDistance;
-			const newZoom = initialZoom * scale;
-			zoomLevel = Math.max(minZoom, Math.min(maxZoom, newZoom));
+			zoomLevel = Math.max(minZoom, Math.min(maxZoom, initialZoom * scale));
 		}
 	}
 
 	function handleTouchEnd(e: TouchEvent) {
-		if (e.touches.length < 2) {
-			initialPinchDistance = 0;
-		}
+		if (e.touches.length < 2) initialPinchDistance = 0;
 	}
 
 	function handleWheel(e: WheelEvent) {
 		if (initialPinchDistance > 0) return;
-
 		if (e.ctrlKey) {
 			e.preventDefault();
 			setManualMode();
 			const delta = -e.deltaY * 0.02;
-			const newZoom = zoomLevel + delta;
-			zoomLevel = Math.max(minZoom, Math.min(maxZoom, newZoom));
+			zoomLevel = Math.max(minZoom, Math.min(maxZoom, zoomLevel + delta));
 			return;
 		}
-
 		e.preventDefault();
 		setManualMode();
 		const delta = -e.deltaY * 0.002;
-		const newZoom = zoomLevel + delta;
-		zoomLevel = Math.max(minZoom, Math.min(maxZoom, newZoom));
+		zoomLevel = Math.max(minZoom, Math.min(maxZoom, zoomLevel + delta));
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === "ArrowLeft") {
+		if (e.key === 'ArrowLeft') {
 			e.preventDefault();
 			documentStore.previousDocument();
-		} else if (e.key === "ArrowRight") {
+		} else if (e.key === 'ArrowRight') {
 			e.preventDefault();
 			documentStore.nextDocument();
-		} else if (e.key === "+" || e.key === "=") {
+		} else if (e.key === '+' || e.key === '=') {
 			e.preventDefault();
 			zoomIn();
-		} else if (e.key === "-" || e.key === "_") {
+		} else if (e.key === '-' || e.key === '_') {
 			e.preventDefault();
 			zoomOut();
-		} else if (e.key === "Home") {
+		} else if (e.key === 'Home') {
 			e.preventDefault();
-			fitMode = "contain";
+			fitMode = 'contain';
 			updateZoomForFitMode();
 		}
 	}
 
 	onMount(() => {
-		window.addEventListener("mousemove", handleGlobalMouseMove);
-		window.addEventListener("mouseup", handleGlobalMouseUp);
+		window.addEventListener('mousemove', handleGlobalMouseMove);
+		window.addEventListener('mouseup', handleGlobalMouseUp);
 
 		if (scrollContainer) {
 			resizeObserver = new ResizeObserver(() => {
 				requestAnimationFrame(() => {
-					if (fitMode !== "manual") {
-						updateZoomForFitMode();
-					}
+					if (fitMode !== 'manual') updateZoomForFitMode();
 				});
 			});
 			resizeObserver.observe(scrollContainer);
 		}
 
 		return () => {
-			window.removeEventListener("mousemove", handleGlobalMouseMove);
-			window.removeEventListener("mouseup", handleGlobalMouseUp);
+			window.removeEventListener('mousemove', handleGlobalMouseMove);
+			window.removeEventListener('mouseup', handleGlobalMouseUp);
 			if (resizeObserver) resizeObserver.disconnect();
 		};
 	});
 </script>
 
 <div class="document-viewer-wrapper">
-	<div class="document-header">
-		<div class="document-nav-group">
-			<button
-				class="document-button"
-				onclick={() => documentStore.previousDocument()}
-				aria-label="Previous document"
-			>
-				<ChevronLeft size={20} />
-			</button>
+	<div class="document-header liquid-glass liquid-glass-small">
+		<div class="nav-group">
+			<Version26ToolbarButton
+				symbol="chevron_left"
+				onPress={() => canPrev && documentStore.previousDocument()}
+			/>
 			<span class="document-label">{documentStore.currentLabel}</span>
-			<button
-				class="document-button"
-				onclick={() => documentStore.nextDocument()}
-				aria-label="Sonraki belge"
-			>
-				<ChevronRight size={20} />
-			</button>
+			<Version26ToolbarButton
+				symbol="chevron_right"
+				onPress={() => canNext && documentStore.nextDocument()}
+			/>
 		</div>
 	</div>
 
@@ -316,16 +279,15 @@
 		<div
 			class="document-container"
 			class:fraud-alert={documentStore.fraudMarked}
-			class:fit-center={fitMode === "contain"}
+			class:fit-center={fitMode === 'contain'}
 			role="img"
 			aria-label="Document view with anomaly highlights"
 		>
 			{#if isDocumentLoading && !hasImage}
 				<div class="skeleton-container">
 					<Skeleton variant="image" width="100%" height="100%" />
-					<div class="skeleton-overlay">
-						<div class="loading-spinner"></div>
-						<span>Loading documents...</span>
+					<div class="skeleton-overlay liquid-glass liquid-glass-small">
+						<RegularProgressIndicator showLabel={true} label="Loading documents…" />
 					</div>
 				</div>
 			{:else}
@@ -338,7 +300,7 @@
 							class="document-image"
 							style:width={documentStore.imageNaturalWidth > 0
 								? `${documentStore.imageNaturalWidth * zoomLevel}px`
-								: "auto"}
+								: 'auto'}
 							style:height="auto"
 							onload={handleImageLoad}
 							draggable="false"
@@ -351,8 +313,7 @@
 								height={documentStore.imageNaturalHeight}
 								anomalies={documentStore.visibleAnomalies}
 								checkedIds={documentStore.checkedAnomalyIds}
-								onToggle={(id) =>
-									documentStore.toggleAnomaly(id)}
+								onToggle={(id) => documentStore.toggleAnomaly(id)}
 							/>
 
 							<OcrOverlay
@@ -366,7 +327,7 @@
 						{/if}
 					{:else}
 						<div class="no-document">
-							<FileText size={40} />
+							<Symbol name="description" size="large" color="var(--labels-tertiary)" />
 							<p>Please upload a document</p>
 						</div>
 					{/if}
@@ -375,40 +336,235 @@
 		</div>
 	</div>
 
-	<div class="zoom-controls">
-		<div class="zoom-group">
-			<button
-				class="document-button"
-				onclick={zoomOut}
-				disabled={zoomLevel <= minZoom}
-			>
-				<Minus size={20} />
-			</button>
-			<span class="document-stats">{getDisplayPercentage()}%</span>
-			<button
-				class="document-button"
-				onclick={zoomIn}
-				disabled={zoomLevel >= maxZoom}
-			>
-				<Plus size={20} />
-			</button>
-		</div>
+	<div class="zoom-controls liquid-glass liquid-glass-small">
+		<Version26ToolbarButton symbol="remove" onPress={zoomOut} />
+		<span class="zoom-label">{getDisplayPercentage()}%</span>
+		<Version26ToolbarButton symbol="add" onPress={zoomIn} />
 	</div>
 
 	<div class="fit-control">
-		<button class="document-button" onclick={toggleFit}>
-			{#if fitMode === "width"}
-				<MoveVertical size={20} />
-			{:else}
-				<MoveHorizontal size={20} />
-			{/if}
-		</button>
+		<Version26SegmentedControl>
+			<Version26SegmentedControlButton
+				label="Width"
+				state={fitMode === 'width' ? 'selected' : 'default'}
+				onPress={() => setFitMode('width')}
+			/>
+			<Version26SegmentedControlButton
+				label="Height"
+				state={fitMode === 'contain' ? 'selected' : 'default'}
+				onPress={() => setFitMode('contain')}
+			/>
+		</Version26SegmentedControl>
 	</div>
 
-	{#if documentStore.isProcessingUpload}
-		<div class="processing-overlay">
-			<div class="loading-spinner"></div>
-			<span>Processing OCR...</span>
+	{#if documentStore.isProcessingUpload && hasImage}
+		<div class="processing-overlay liquid-glass liquid-glass-medium">
+			<RegularProgressIndicator showLabel={true} label="Processing OCR…" />
 		</div>
 	{/if}
 </div>
+
+<style>
+	.document-viewer-wrapper {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		min-height: 0;
+		position: relative;
+		background: color-mix(in srgb, var(--bg-grouped-primary) 72%, var(--bg-grouped-tertiary));
+	}
+
+	.document-header,
+	.zoom-controls {
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 4px;
+		z-index: 5;
+		padding: 4px;
+		border-radius: 999px;
+		background: var(--app-glass-bg);
+		border: 0.5px solid var(--app-glass-border);
+		box-shadow: var(--app-floating-shadow);
+		backdrop-filter: blur(24px) saturate(1.28);
+		-webkit-backdrop-filter: blur(24px) saturate(1.28);
+	}
+
+	.document-header::before,
+	.document-header::after,
+	.zoom-controls::before,
+	.zoom-controls::after,
+	.skeleton-overlay::before,
+	.skeleton-overlay::after,
+	.processing-overlay::before,
+	.processing-overlay::after {
+		border-radius: inherit;
+	}
+
+	.document-header {
+		top: 12px;
+	}
+
+	.zoom-controls {
+		bottom: 12px;
+	}
+
+	.nav-group {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	.document-label {
+		min-width: 100px;
+		text-align: center;
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--labels-primary);
+		padding: 0 8px;
+	}
+
+	.zoom-label {
+		min-width: 60px;
+		text-align: center;
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--labels-primary);
+	}
+
+	.fit-control {
+		position: absolute;
+		bottom: 12px;
+		right: 12px;
+		z-index: 5;
+		min-width: 180px;
+		padding: 3px;
+		border-radius: 999px;
+		background: var(--app-glass-bg);
+		border: 0.5px solid var(--app-glass-border);
+		box-shadow: var(--app-floating-shadow);
+		backdrop-filter: blur(24px) saturate(1.28);
+		-webkit-backdrop-filter: blur(24px) saturate(1.28);
+	}
+
+	.document-scroll-container {
+		flex: 1;
+		overflow: auto;
+		min-height: 0;
+		cursor: grab;
+		user-select: none;
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-start;
+		background:
+			linear-gradient(
+				180deg,
+				color-mix(in srgb, var(--bg-grouped-secondary) 72%, transparent),
+				color-mix(in srgb, var(--bg-grouped-primary) 84%, transparent)
+			);
+	}
+
+	.document-scroll-container.panning {
+		cursor: grabbing;
+	}
+
+	.document-container {
+		position: relative;
+		display: block;
+		margin: auto;
+		flex-shrink: 0;
+	}
+
+	.document-container.fraud-alert {
+		border: 4px solid var(--colors-red);
+	}
+
+	.document-container.fit-center {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.document-image-wrapper {
+		position: relative;
+		display: block;
+		width: fit-content;
+		margin: 0 auto;
+	}
+
+	.document-image {
+		display: block;
+		max-width: none;
+		transition: width 0.2s ease;
+		box-shadow: 0 18px 46px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.1);
+		border-radius: 4px;
+	}
+
+	.skeleton-container {
+		width: 100%;
+		height: 100%;
+		min-height: 400px;
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.skeleton-overlay {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 14px 18px;
+		border-radius: 18px;
+		z-index: 10;
+		background: var(--app-glass-bg);
+		border: 0.5px solid var(--app-glass-border);
+		box-shadow: var(--app-floating-shadow);
+		backdrop-filter: blur(24px) saturate(1.28);
+		-webkit-backdrop-filter: blur(24px) saturate(1.28);
+	}
+
+	.processing-overlay {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		padding: 24px 32px;
+		border-radius: 18px;
+		z-index: 20;
+		background: var(--app-glass-bg);
+		border: 0.5px solid var(--app-glass-border);
+		box-shadow: var(--app-floating-shadow);
+		backdrop-filter: blur(24px) saturate(1.28);
+		-webkit-backdrop-filter: blur(24px) saturate(1.28);
+	}
+
+	.no-document {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: 400px;
+		gap: 12px;
+		color: var(--labels-secondary);
+	}
+
+	.no-document p {
+		font-size: 15px;
+		font-weight: 500;
+	}
+</style>

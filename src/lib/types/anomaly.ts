@@ -8,6 +8,7 @@ export interface Anomaly {
 	width: number;
 	height: number;
 	type: AnomalyType;
+	severity?: 'DANGER' | 'WARNING' | 'SAFE';
 }
 
 export interface DocumentState {
@@ -30,6 +31,8 @@ export interface OcrLine {
 	width?: number;
 	height?: number;
 	fontSize?: number;
+	confidence?: number;
+	severity?: 'DANGER' | 'WARNING' | 'SAFE';
 }
 
 export interface DocumentPreset {
@@ -40,6 +43,19 @@ export interface DocumentPreset {
 	anomalies: Anomaly[];
 	ocrText: string;
 	ocrLines: OcrLine[];
+	ocrData?: {
+		fullText?: string;
+		words?: Array<{
+			text: string;
+			confidence?: number;
+			bbox: {
+				x0: number;
+				y0: number;
+				x1: number;
+				y1: number;
+			};
+		}>;
+	};
 }
 
 export const defaultDocumentId = '';
