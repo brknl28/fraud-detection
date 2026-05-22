@@ -11,6 +11,7 @@
 		RegularProgressIndicator,
 	} from 'apple-svelte';
 	import Symbol from '$lib/components/Symbol.svelte';
+	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte';
 	import { documentStore } from '$lib/stores/document.svelte';
 
 	let viewportWidth = $state(0);
@@ -200,24 +201,29 @@
 
 <div class="dashboard" class:compact={isCompact} class:narrow={isNarrow}>
 	<header class="topbar">
-		<NavigationBar showBackground={true} title="Fraud Detection" size="default">
-			<svelte:fragment slot="trailing-1">
-				<NavigationBarTrailing
-					type="symbol"
-					symbol="help_outline"
-					label="Apple Svelte"
-					onPress={() => window.open('https://apple-svelte.vercel.app/', '_blank')}
-				/>
-			</svelte:fragment>
-			<svelte:fragment slot="trailing-2">
-				<NavigationBarTrailing
-					type="text-emphasized"
-					symbol="play_arrow"
-					label="Analyze"
-					onPress={startNewAnalysis}
-				/>
-			</svelte:fragment>
-		</NavigationBar>
+		<div class="topbar-inner">
+			<NavigationBar showBackground={false} title="Fraud Detection" size="default">
+				<svelte:fragment slot="trailing-1">
+					<NavigationBarTrailing
+						type="symbol"
+						symbol="help_outline"
+						label="Apple Svelte"
+						onPress={() => window.open('https://apple-svelte.vercel.app/', '_blank')}
+					/>
+				</svelte:fragment>
+				<svelte:fragment slot="trailing-2">
+					<NavigationBarTrailing
+						type="text-emphasized"
+						symbol="play_arrow"
+						label="Analyze"
+						onPress={startNewAnalysis}
+					/>
+				</svelte:fragment>
+			</NavigationBar>
+			<div class="topbar-center">
+				<ThemeSwitch />
+			</div>
+		</div>
 	</header>
 
 	<main id="main-content" class="workspace" aria-label="Fraud Detection project overview">
@@ -541,6 +547,19 @@
 		background: var(--materials-chrome);
 		backdrop-filter: blur(25px);
 		-webkit-backdrop-filter: blur(25px);
+	}
+
+	.topbar-inner {
+		position: relative;
+	}
+
+	.topbar-center {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		pointer-events: auto;
+		z-index: 1;
 	}
 
 	.workspace {

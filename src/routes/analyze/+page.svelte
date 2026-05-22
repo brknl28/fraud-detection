@@ -15,6 +15,7 @@
 	import DecisionPanel from '$lib/components/DecisionPanel.svelte';
 	import AnomalyCounts from '$lib/components/AnomalyCounts.svelte';
 	import IssuesList from '$lib/components/IssuesList.svelte';
+	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte';
 	import { documentStore } from '$lib/stores/document.svelte';
 
 	let viewportWidth = $state(0);
@@ -38,23 +39,28 @@
 
 <div class="app-shell" class:mobile={isMobile} class:tablet={isTablet} class:desktop={isDesktop}>
 	<header class="topbar">
-		<NavigationBar showBackground={true} title="Fraud Detection" size="default">
-			<svelte:fragment slot="leading">
-				<NavigationBarLeading
-					symbol="arrow_back_ios_new"
-					label="Project"
-					onPress={() => goto('/')}
-				/>
-			</svelte:fragment>
-			<svelte:fragment slot="trailing-1">
-				<NavigationBarTrailing
-					type="symbol"
-					symbol="restart_alt"
-					label="Reset"
-					onPress={() => documentStore.reset()}
-				/>
-			</svelte:fragment>
-		</NavigationBar>
+		<div class="topbar-inner">
+			<NavigationBar showBackground={false} title="Fraud Detection" size="default">
+				<svelte:fragment slot="leading">
+					<NavigationBarLeading
+						symbol="arrow_back_ios_new"
+						label="Project"
+						onPress={() => goto('/')}
+					/>
+				</svelte:fragment>
+				<svelte:fragment slot="trailing-1">
+					<NavigationBarTrailing
+						type="symbol"
+						symbol="restart_alt"
+						label="Reset"
+						onPress={() => documentStore.reset()}
+					/>
+				</svelte:fragment>
+			</NavigationBar>
+			<div class="topbar-center">
+				<ThemeSwitch />
+			</div>
+		</div>
 	</header>
 
 	<div class="layout">
@@ -142,6 +148,19 @@
 		backdrop-filter: blur(25px);
 		-webkit-backdrop-filter: blur(25px);
 		z-index: 5;
+	}
+
+	.topbar-inner {
+		position: relative;
+	}
+
+	.topbar-center {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		pointer-events: auto;
+		z-index: 1;
 	}
 
 	.layout {
