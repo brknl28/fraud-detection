@@ -62,7 +62,7 @@
 		{#if !isMobile || mobileTab === 'document'}
 			<section
 				id="main-content"
-				class="document-section app-liquid-surface liquid-glass liquid-glass-large"
+				class="document-section"
 				role="main"
 				aria-label="Document view"
 			>
@@ -71,7 +71,7 @@
 		{/if}
 
 		{#if isDesktop}
-			<aside class="sidebar-host app-liquid-surface liquid-glass liquid-glass-large">
+			<aside class="sidebar-host">
 				<Version26Sidebar>
 					<div class="sidebar-content">
 						<AnomalyCounts />
@@ -83,7 +83,7 @@
 				</Version26Sidebar>
 			</aside>
 		{:else if isTablet}
-			<aside class="stacked-panel app-liquid-surface liquid-glass liquid-glass-large">
+			<aside class="stacked-panel">
 				<AnomalyCounts />
 				<UploadSection />
 				<OcrTextList />
@@ -91,13 +91,13 @@
 				<DecisionPanel />
 			</aside>
 		{:else if isMobile && mobileTab === 'issues'}
-			<section class="mobile-panel app-liquid-surface liquid-glass liquid-glass-large">
+			<section class="mobile-panel">
 				<AnomalyCounts />
 				<OcrTextList />
 				<IssuesList />
 			</section>
 		{:else if isMobile && mobileTab === 'decision'}
-			<section class="mobile-panel app-liquid-surface liquid-glass liquid-glass-large">
+			<section class="mobile-panel">
 				<UploadSection />
 				<DecisionPanel />
 			</section>
@@ -169,7 +169,7 @@
 		position: relative;
 		border: 0.5px solid var(--app-surface-border);
 		border-radius: var(--app-panel-radius);
-		background: color-mix(in srgb, var(--bg-grouped-secondary) 68%, transparent);
+		background: var(--bg-grouped-secondary);
 		box-shadow: var(--app-panel-shadow);
 	}
 
@@ -180,7 +180,7 @@
 		overflow: hidden;
 		border: 0.5px solid var(--app-surface-border);
 		border-radius: var(--app-panel-radius);
-		background: color-mix(in srgb, var(--app-panel-bg) 72%, transparent);
+		background: var(--app-panel-bg);
 		box-shadow: var(--app-panel-shadow);
 	}
 
@@ -226,7 +226,7 @@
 		gap: 14px;
 		padding: var(--app-panel-gap);
 		overflow-y: auto;
-		background: color-mix(in srgb, var(--app-panel-bg) 72%, transparent);
+		background: var(--app-panel-bg);
 		border: 0.5px solid var(--app-surface-border);
 		border-radius: var(--app-panel-radius);
 		box-shadow: var(--app-panel-shadow);
@@ -239,7 +239,7 @@
 		gap: 14px;
 		padding: var(--app-panel-gap);
 		overflow-y: auto;
-		background: color-mix(in srgb, var(--app-panel-bg) 72%, transparent);
+		background: var(--app-panel-bg);
 		border: 0.5px solid var(--app-surface-border);
 		border-radius: var(--app-panel-radius);
 		box-shadow: var(--app-panel-shadow);

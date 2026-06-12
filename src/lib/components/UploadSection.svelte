@@ -82,7 +82,7 @@
 />
 
 <div
-	class="upload-wrapper app-liquid-surface liquid-glass liquid-glass-medium"
+	class="upload-wrapper"
 	role="presentation"
 	ondragover={handleDragOver}
 	ondrop={handleDrop}
@@ -133,8 +133,6 @@
 		justify-content: center;
 		align-items: center;
 		width: 100%;
-		padding: 14px;
-		border-radius: 18px;
 	}
 
 	.upload-wrapper :global(button) {

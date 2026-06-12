@@ -12,22 +12,7 @@ body {
 }
 
 body {
-	background:
-		radial-gradient(
-			circle at top left,
-			color-mix(in srgb, var(--colors-blue) 12%, transparent),
-			transparent 34%
-		),
-		radial-gradient(
-			circle at top right,
-			color-mix(in srgb, var(--colors-teal) 10%, transparent),
-			transparent 28%
-		),
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--bg-grouped-secondary) 86%, white),
-			var(--bg-grouped-primary) 42%
-		);
+	background: var(--bg-grouped-primary);
 	color: var(--labels-primary);
 	font-family: var(--sans-serif-font-family);
 	-webkit-font-smoothing: antialiased;
@@ -115,30 +100,6 @@ body:not(.fonts-loaded) .material-symbols-rounded {
 	max-width: var(--app-frame-width);
 	margin-inline: auto;
 	padding-inline: var(--app-page-inset);
-}
-
-.app-liquid-surface,
-.app-liquid-subsurface {
-	position: relative;
-	isolation: isolate;
-	border: 0.5px solid var(--app-glass-border) !important;
-	box-shadow: var(--app-floating-shadow);
-}
-
-.app-liquid-surface {
-	background: color-mix(in srgb, var(--bg-grouped-secondary) 68%, transparent) !important;
-}
-
-.app-liquid-subsurface {
-	background: color-mix(in srgb, var(--bg-grouped-tertiary) 76%, transparent) !important;
-	box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
-}
-
-.app-liquid-surface::before,
-.app-liquid-surface::after,
-.app-liquid-subsurface::before,
-.app-liquid-subsurface::after {
-	border-radius: inherit;
 }
 
 .topbar-inner .navigation-bar {

@@ -25,10 +25,7 @@
 	}
 </script>
 
-<div
-	class="decision-panel app-liquid-surface liquid-glass liquid-glass-medium"
-	bind:this={panelEl}
->
+<div class="decision-panel" bind:this={panelEl}>
 	<div class="decision-button" class:disabled={!canDecide || documentStore.fraudMarked}>
 		<Version26Button
 			labelType="symbol-and-text"
@@ -67,8 +64,6 @@
 		display: flex;
 		gap: 8px;
 		width: 100%;
-		padding: 12px;
-		border-radius: 18px;
 	}
 
 	.decision-button {
