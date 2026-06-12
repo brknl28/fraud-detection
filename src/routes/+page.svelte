@@ -227,7 +227,7 @@
 		class="workspace app-frame"
 		aria-label="Fraud Detection project overview"
 	>
-		<section class="overview-panel">
+		<section class="overview-panel app-liquid-surface liquid-glass liquid-glass-large">
 			<div class="overview-copy">
 				<p class="footnote-emphasized eyebrow">Document inspection</p>
 				<h1 class="large-title-emphasized">Fraud Detection</h1>
@@ -274,7 +274,7 @@
 
 			<div class="overview-preview">
 				{#if documentStore.isLoading && !primarySample}
-					<div class="loading-panel">
+					<div class="loading-panel app-liquid-surface liquid-glass liquid-glass-medium">
 						<RegularProgressIndicator showLabel={true} label="Loading fixtures..." />
 					</div>
 				{:else if primarySample}
@@ -295,7 +295,7 @@
 					</button>
 
 					<div class="preview-details">
-						<div class="detail-row">
+						<div class="detail-row app-liquid-subsurface liquid-glass liquid-glass-small">
 							<div class="detail-icon" style:--detail-color="var(--colors-blue)">
 								<Symbol name="description" size="small" />
 							</div>
@@ -304,7 +304,7 @@
 								<p class="caption1 detail-muted">Current fixture</p>
 							</div>
 						</div>
-						<div class="detail-row">
+						<div class="detail-row app-liquid-subsurface liquid-glass liquid-glass-small">
 							<div class="detail-icon" style:--detail-color="var(--colors-green)">
 								<Symbol name="fact_check" size="small" />
 							</div>
@@ -315,7 +315,7 @@
 						</div>
 					</div>
 				{:else}
-					<div class="empty-preview">
+					<div class="empty-preview app-liquid-surface liquid-glass liquid-glass-medium">
 						<Symbol name="folder_open" size="large" color="var(--labels-tertiary)" />
 						<p class="headline">No document fixtures</p>
 						<p class="footnote">Add images and OCR JSON files to populate this view.</p>
@@ -334,7 +334,10 @@
 
 			<Collection style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); row-gap: 16px;">
 				{#each projectMetrics as metric (metric.label)}
-					<article class="metric-card" style:--metric-tint={metric.tint}>
+					<article
+						class="metric-card app-liquid-surface liquid-glass liquid-glass-medium"
+						style:--metric-tint={metric.tint}
+					>
 						<div class="metric-head">
 							<div class="metric-icon">
 								<Symbol name={metric.symbol} size="medium" color={metric.tint} />
@@ -359,7 +362,10 @@
 
 				<div class="workflow-list">
 					{#each reviewSignals as item (item.title)}
-						<div class="workflow-row" style:--step-tint={item.tint}>
+						<div
+							class="workflow-row app-liquid-subsurface liquid-glass liquid-glass-small"
+							style:--step-tint={item.tint}
+						>
 							<div class="workflow-icon">
 								<Symbol name={item.symbol} size="medium" color={item.tint} />
 							</div>
@@ -369,8 +375,8 @@
 							</div>
 							<Symbol name="chevron_right" size="small" color="var(--labels-tertiary)" />
 						</div>
-						{/each}
-					</div>
+					{/each}
+				</div>
 			</div>
 
 			<div class="split-col">
@@ -383,7 +389,10 @@
 
 				<div class="workflow-list">
 					{#each workflow as item (item.title)}
-						<div class="workflow-row" style:--step-tint={item.tint}>
+						<div
+							class="workflow-row app-liquid-subsurface liquid-glass liquid-glass-small"
+							style:--step-tint={item.tint}
+						>
 							<div class="workflow-icon">
 								<Symbol name={item.symbol} size="medium" color={item.tint} />
 							</div>
@@ -404,7 +413,10 @@
 					<p class="footnote-emphasized eyebrow">Fixtures</p>
 					<h2 class="title2-emphasized">Tracked documents</h2>
 				</div>
-				<div class="category-rail" aria-label="Fixture filters">
+				<div
+					class="category-rail app-liquid-subsurface liquid-glass liquid-glass-small"
+					aria-label="Fixture filters"
+				>
 					{#each categoryFilters as cat (cat.id)}
 						<button
 							type="button"
@@ -420,11 +432,11 @@
 			</div>
 
 			{#if documentStore.isLoading && documentStore.documents.length === 0}
-				<div class="samples-loading">
+				<div class="samples-loading app-liquid-surface liquid-glass liquid-glass-medium">
 					<RegularProgressIndicator showLabel={true} label="Loading fixtures..." />
 				</div>
 			{:else if filteredSamples.length === 0}
-				<div class="empty-panel">
+				<div class="empty-panel app-liquid-surface liquid-glass liquid-glass-medium">
 					<Symbol name="folder_open" size="large" color="var(--labels-tertiary)" />
 					<p class="headline">No fixtures in this category</p>
 					<p class="footnote muted">Switch filters or add another document image.</p>
@@ -434,7 +446,7 @@
 					{#each filteredSamples as preset, i (preset.id)}
 						<button
 							type="button"
-							class="sample-card"
+							class="sample-card app-liquid-surface liquid-glass liquid-glass-medium"
 							onclick={() => openSample(preset.id)}
 							aria-label="Open {preset.label} in analyzer"
 						>
@@ -503,7 +515,7 @@
 					</div>
 				</div>
 
-				<div class="action-panel">
+				<div class="action-panel app-liquid-surface liquid-glass liquid-glass-medium">
 					<div class="action-icon">
 						<Symbol name="shield_person" size="large" color="var(--colors-blue)" />
 					</div>
@@ -567,8 +579,8 @@
 		align-items: stretch;
 		padding: 24px;
 		border-radius: 20px;
-		background: var(--bg-grouped-secondary);
-		border: 0.5px solid var(--separators-non-opaque);
+		background: color-mix(in srgb, var(--bg-grouped-secondary) 76%, transparent);
+		border: 0.5px solid var(--app-glass-border);
 	}
 
 	.overview-copy {
@@ -645,8 +657,8 @@
 		min-width: 0;
 		overflow: hidden;
 		border-radius: 16px;
-		background: var(--fills-tertiary);
-		border: 0.5px solid var(--separators-non-opaque);
+		background: color-mix(in srgb, var(--fills-tertiary) 72%, transparent);
+		border: 0.5px solid var(--app-glass-border);
 		text-align: left;
 	}
 
@@ -702,7 +714,7 @@
 		gap: 12px;
 		padding: 14px;
 		border-radius: 16px;
-		background: var(--bg-grouped-tertiary);
+		background: color-mix(in srgb, var(--bg-grouped-tertiary) 74%, transparent);
 	}
 
 	.detail-icon,
@@ -731,8 +743,8 @@
 		min-height: 180px;
 		padding: 28px;
 		border-radius: 16px;
-		background: var(--bg-grouped-secondary);
-		border: 0.5px solid var(--separators-non-opaque);
+		background: color-mix(in srgb, var(--bg-grouped-secondary) 72%, transparent);
+		border: 0.5px solid var(--app-glass-border);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -773,8 +785,8 @@
 		gap: 8px;
 		padding: 16px;
 		border-radius: 16px;
-		background: var(--bg-grouped-secondary);
-		border: 0.5px solid var(--separators-non-opaque);
+		background: color-mix(in srgb, var(--bg-grouped-secondary) 72%, transparent);
+		border: 0.5px solid var(--app-glass-border);
 	}
 
 	.metric-head {
@@ -810,8 +822,8 @@
 	.action-panel {
 		padding: 18px;
 		border-radius: 16px;
-		background: var(--bg-grouped-secondary);
-		border: 0.5px solid var(--separators-non-opaque);
+		background: color-mix(in srgb, var(--bg-grouped-secondary) 72%, transparent);
+		border: 0.5px solid var(--app-glass-border);
 	}
 
 	.workflow-list {
@@ -821,8 +833,8 @@
 	}
 
 	.workflow-row {
-		background: var(--bg-grouped-secondary);
-		border: 0.5px solid var(--separators-non-opaque);
+		background: color-mix(in srgb, var(--bg-grouped-secondary) 72%, transparent);
+		border: 0.5px solid var(--app-glass-border);
 	}
 
 	.workflow-icon {
@@ -839,7 +851,7 @@
 		gap: 4px;
 		padding: 4px;
 		border-radius: 999px;
-		background: var(--fills-tertiary);
+		background: color-mix(in srgb, var(--fills-tertiary) 76%, transparent);
 	}
 
 	.cat-chip {
@@ -856,7 +868,7 @@
 	.cat-chip:hover,
 	.cat-chip.active {
 		color: var(--labels-primary);
-		background: var(--bg-grouped-secondary);
+		background: color-mix(in srgb, var(--bg-grouped-secondary) 76%, transparent);
 	}
 
 	.sample-card {
@@ -865,8 +877,8 @@
 		padding: 0;
 		overflow: hidden;
 		border-radius: 16px;
-		background: var(--bg-grouped-secondary);
-		border: 0.5px solid var(--separators-non-opaque);
+		background: color-mix(in srgb, var(--bg-grouped-secondary) 72%, transparent);
+		border: 0.5px solid var(--app-glass-border);
 		text-align: left;
 		transition: transform 0.2s ease, border-color 0.2s ease;
 	}
@@ -880,7 +892,7 @@
 	.sample-thumb {
 		position: relative;
 		aspect-ratio: 4 / 3;
-		background: var(--fills-tertiary);
+		background: color-mix(in srgb, var(--fills-tertiary) 76%, transparent);
 		overflow: hidden;
 	}
 
@@ -1002,6 +1014,14 @@
 	}
 
 	@media (max-width: 768px) {
+		.topbar-inner :global(.navigation-bar .trailing > button:first-child) {
+			display: none;
+		}
+
+		.topbar-inner :global(.navigation-bar .trailing) {
+			gap: 0;
+		}
+
 		.workspace {
 			padding-block: 18px 80px;
 			gap: 26px;

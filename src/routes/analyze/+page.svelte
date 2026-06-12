@@ -43,15 +43,14 @@
 				<svelte:fragment slot="leading">
 					<NavigationBarLeading
 						symbol="arrow_back_ios_new"
-						label="Project"
+						label={isMobile ? '' : 'Project'}
 						onPress={() => goto('/')}
 					/>
 				</svelte:fragment>
 				<svelte:fragment slot="trailing-1">
 					<NavigationBarTrailing
-						type="symbol"
-						symbol="restart_alt"
-						label="Reset"
+						type="text-emphasized"
+						label="Yenile"
 						onPress={() => documentStore.reset()}
 					/>
 				</svelte:fragment>
@@ -63,7 +62,7 @@
 		{#if !isMobile || mobileTab === 'document'}
 			<section
 				id="main-content"
-				class="document-section"
+				class="document-section app-liquid-surface liquid-glass liquid-glass-large"
 				role="main"
 				aria-label="Document view"
 			>
@@ -72,7 +71,7 @@
 		{/if}
 
 		{#if isDesktop}
-			<aside class="sidebar-host">
+			<aside class="sidebar-host app-liquid-surface liquid-glass liquid-glass-large">
 				<Version26Sidebar>
 					<div class="sidebar-content">
 						<AnomalyCounts />
@@ -84,7 +83,7 @@
 				</Version26Sidebar>
 			</aside>
 		{:else if isTablet}
-			<aside class="stacked-panel">
+			<aside class="stacked-panel app-liquid-surface liquid-glass liquid-glass-large">
 				<AnomalyCounts />
 				<UploadSection />
 				<OcrTextList />
@@ -92,13 +91,13 @@
 				<DecisionPanel />
 			</aside>
 		{:else if isMobile && mobileTab === 'issues'}
-			<section class="mobile-panel">
+			<section class="mobile-panel app-liquid-surface liquid-glass liquid-glass-large">
 				<AnomalyCounts />
 				<OcrTextList />
 				<IssuesList />
 			</section>
 		{:else if isMobile && mobileTab === 'decision'}
-			<section class="mobile-panel">
+			<section class="mobile-panel app-liquid-surface liquid-glass liquid-glass-large">
 				<UploadSection />
 				<DecisionPanel />
 			</section>
@@ -170,7 +169,7 @@
 		position: relative;
 		border: 0.5px solid var(--app-surface-border);
 		border-radius: var(--app-panel-radius);
-		background: var(--bg-grouped-secondary);
+		background: color-mix(in srgb, var(--bg-grouped-secondary) 68%, transparent);
 		box-shadow: var(--app-panel-shadow);
 	}
 
@@ -181,7 +180,7 @@
 		overflow: hidden;
 		border: 0.5px solid var(--app-surface-border);
 		border-radius: var(--app-panel-radius);
-		background: var(--app-panel-bg);
+		background: color-mix(in srgb, var(--app-panel-bg) 72%, transparent);
 		box-shadow: var(--app-panel-shadow);
 	}
 
@@ -227,7 +226,7 @@
 		gap: 14px;
 		padding: var(--app-panel-gap);
 		overflow-y: auto;
-		background: var(--app-panel-bg);
+		background: color-mix(in srgb, var(--app-panel-bg) 72%, transparent);
 		border: 0.5px solid var(--app-surface-border);
 		border-radius: var(--app-panel-radius);
 		box-shadow: var(--app-panel-shadow);
@@ -240,7 +239,7 @@
 		gap: 14px;
 		padding: var(--app-panel-gap);
 		overflow-y: auto;
-		background: var(--app-panel-bg);
+		background: color-mix(in srgb, var(--app-panel-bg) 72%, transparent);
 		border: 0.5px solid var(--app-surface-border);
 		border-radius: var(--app-panel-radius);
 		box-shadow: var(--app-panel-shadow);

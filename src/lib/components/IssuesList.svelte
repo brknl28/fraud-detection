@@ -4,7 +4,11 @@
 	import IssueItem from './IssueItem.svelte';
 </script>
 
-<div class="issues-section" role="region" aria-label="Anomaly list">
+<div
+	class="issues-section app-liquid-surface liquid-glass liquid-glass-medium"
+	role="region"
+	aria-label="Anomaly list"
+>
 	{#if documentStore.anomalies.length === 0}
 		<p class="empty-state">No anomalies detected</p>
 	{:else}
@@ -23,6 +27,8 @@
 <style>
 	.issues-section {
 		width: 100%;
+		padding: 12px;
+		border-radius: 18px;
 	}
 
 	.empty-state {

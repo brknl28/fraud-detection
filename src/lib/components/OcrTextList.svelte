@@ -71,7 +71,7 @@
 	}
 </script>
 
-<div class="ocr-panel">
+<div class="ocr-panel app-liquid-surface liquid-glass liquid-glass-medium">
 	<Version26SegmentedControl>
 		<Version26SegmentedControlButton
 			label="Fields"
@@ -91,7 +91,10 @@
 		{:else}
 			{#if redItems.length > 0}
 				<section class="severity-section">
-					<div class="severity-header" style:--severity-color="var(--colors-red)">
+					<div
+						class="severity-header app-liquid-subsurface liquid-glass liquid-glass-small"
+						style:--severity-color="var(--colors-red)"
+					>
 						<button
 							type="button"
 							class="header-trigger"
@@ -169,7 +172,10 @@
 
 			{#if yellowItems.length > 0}
 				<section class="severity-section">
-					<div class="severity-header" style:--severity-color="var(--colors-yellow)">
+					<div
+						class="severity-header app-liquid-subsurface liquid-glass liquid-glass-small"
+						style:--severity-color="var(--colors-yellow)"
+					>
 						<button
 							type="button"
 							class="header-trigger"
@@ -247,7 +253,10 @@
 
 			{#if greenItems.length > 0}
 				<section class="severity-section">
-					<div class="severity-header" style:--severity-color="var(--colors-green)">
+					<div
+						class="severity-header app-liquid-subsurface liquid-glass liquid-glass-small"
+						style:--severity-color="var(--colors-green)"
+					>
 						<button
 							type="button"
 							class="header-trigger"
@@ -333,6 +342,8 @@
 		gap: 12px;
 		flex: 1;
 		min-height: 0;
+		padding: 14px;
+		border-radius: 20px;
 	}
 
 	.words-scroll {
@@ -356,8 +367,8 @@
 		justify-content: space-between;
 		gap: 8px;
 		padding: 8px 12px;
-		background: var(--bg-grouped-secondary);
-		border: 0.5px solid var(--separators-non-opaque);
+		background: color-mix(in srgb, var(--bg-grouped-secondary) 70%, transparent);
+		border: 0.5px solid var(--app-glass-border);
 		border-radius: 14px;
 		color: var(--severity-color, var(--labels-primary));
 	}
