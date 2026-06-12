@@ -8,6 +8,7 @@
 html,
 body {
 	height: 100%;
+	color-scheme: light;
 }
 
 body {
@@ -77,12 +78,14 @@ body:not(.fonts-loaded) .material-symbols-rounded {
 
 /* ===== apple-svelte theme ===== */
 :root {
+	color-scheme: light;
 	--colors-accent: var(--colors-blue);
 	--colors-accent-2: var(--colors-blue-2);
-	--app-page-inset: clamp(16px, 2.2vw, 28px);
+	--app-page-inset: clamp(14px, 2.2vw, 28px);
 	--app-panel-gap: 16px;
 	--app-panel-radius: 18px;
 	--app-sidebar-width: 344px;
+	--app-frame-width: 1280px;
 	--app-card-bg: color-mix(in srgb, var(--bg-grouped-secondary) 92%, var(--materials-chrome));
 	--app-panel-bg: color-mix(in srgb, var(--bg-grouped-secondary) 84%, var(--colors-blue-2));
 	--app-glass-bg: color-mix(in srgb, var(--materials-chrome) 88%, var(--bg-grouped-secondary));
@@ -92,16 +95,9 @@ body:not(.fonts-loaded) .material-symbols-rounded {
 	--app-panel-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--app-card-bg: color-mix(in srgb, var(--bg-grouped-secondary) 88%, var(--materials-chrome));
-		--app-panel-bg: color-mix(in srgb, var(--bg-grouped-secondary) 90%, var(--colors-blue-2));
-		--app-glass-bg: color-mix(in srgb, var(--materials-chrome) 90%, var(--bg-grouped-secondary));
-		--app-glass-border: color-mix(in srgb, var(--separators-non-opaque) 72%, transparent);
-		--app-surface-border: color-mix(in srgb, var(--separators-non-opaque) 78%, transparent);
-		--app-floating-shadow: 0 18px 46px rgba(0, 0, 0, 0.34), 0 2px 8px rgba(0, 0, 0, 0.22);
-		--app-panel-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
-	}
+.app-frame {
+	width: 100%;
+	max-width: var(--app-frame-width);
+	margin-inline: auto;
+	padding-inline: var(--app-page-inset);
 }
-
-

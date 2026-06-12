@@ -15,7 +15,6 @@
 	import DecisionPanel from '$lib/components/DecisionPanel.svelte';
 	import AnomalyCounts from '$lib/components/AnomalyCounts.svelte';
 	import IssuesList from '$lib/components/IssuesList.svelte';
-	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte';
 	import { documentStore } from '$lib/stores/document.svelte';
 
 	let viewportWidth = $state(0);
@@ -39,7 +38,7 @@
 
 <div class="app-shell" class:mobile={isMobile} class:tablet={isTablet} class:desktop={isDesktop}>
 	<header class="topbar">
-		<div class="topbar-inner">
+		<div class="topbar-inner app-frame">
 			<NavigationBar showBackground={false} title="Fraud Detection" size="default">
 				<svelte:fragment slot="leading">
 					<NavigationBarLeading
@@ -57,13 +56,10 @@
 					/>
 				</svelte:fragment>
 			</NavigationBar>
-			<div class="topbar-center">
-				<ThemeSwitch />
-			</div>
 		</div>
 	</header>
 
-	<div class="layout">
+	<div class="layout app-frame">
 		{#if !isMobile || mobileTab === 'document'}
 			<section
 				id="main-content"
@@ -154,22 +150,13 @@
 		position: relative;
 	}
 
-	.topbar-center {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		pointer-events: auto;
-		z-index: 1;
-	}
-
 	.layout {
 		flex: 1;
 		min-height: 0;
 		display: flex;
 		align-items: stretch;
 		gap: var(--app-panel-gap);
-		padding: var(--app-page-inset);
+		padding-block: var(--app-page-inset);
 		background: var(--bg-grouped-primary);
 		overflow: hidden;
 	}
@@ -274,9 +261,4 @@
 		}
 	}
 
-	@media (max-width: 768px) {
-		.layout {
-			padding: 14px;
-		}
-	}
 </style>

@@ -11,7 +11,6 @@
 		RegularProgressIndicator,
 	} from 'apple-svelte';
 	import Symbol from '$lib/components/Symbol.svelte';
-	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte';
 	import { documentStore } from '$lib/stores/document.svelte';
 
 	let viewportWidth = $state(0);
@@ -201,7 +200,7 @@
 
 <div class="dashboard" class:compact={isCompact} class:narrow={isNarrow}>
 	<header class="topbar">
-		<div class="topbar-inner">
+		<div class="topbar-inner app-frame">
 			<NavigationBar showBackground={false} title="Fraud Detection" size="default">
 				<svelte:fragment slot="trailing-1">
 					<NavigationBarTrailing
@@ -220,13 +219,14 @@
 					/>
 				</svelte:fragment>
 			</NavigationBar>
-			<div class="topbar-center">
-				<ThemeSwitch />
-			</div>
 		</div>
 	</header>
 
-	<main id="main-content" class="workspace" aria-label="Fraud Detection project overview">
+	<main
+		id="main-content"
+		class="workspace app-frame"
+		aria-label="Fraud Detection project overview"
+	>
 		<section class="overview-panel">
 			<div class="overview-copy">
 				<p class="footnote-emphasized eyebrow">Document inspection</p>
@@ -553,19 +553,8 @@
 		position: relative;
 	}
 
-	.topbar-center {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		pointer-events: auto;
-		z-index: 1;
-	}
-
 	.workspace {
-		width: min(100%, 1280px);
-		margin: 0 auto;
-		padding: 28px var(--app-page-inset) 96px;
+		padding-block: 28px 96px;
 		display: flex;
 		flex-direction: column;
 		gap: 36px;
@@ -990,7 +979,7 @@
 
 	@media (max-width: 1024px) {
 		.workspace {
-			padding-top: 22px;
+			padding-block: 22px 96px;
 			gap: 30px;
 		}
 
@@ -1014,7 +1003,7 @@
 
 	@media (max-width: 768px) {
 		.workspace {
-			padding: 18px 14px 80px;
+			padding-block: 18px 80px;
 			gap: 26px;
 		}
 
