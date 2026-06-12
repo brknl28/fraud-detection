@@ -43,14 +43,15 @@
 				<svelte:fragment slot="leading">
 					<NavigationBarLeading
 						symbol="arrow_back_ios_new"
-						label={isMobile ? '' : 'Project'}
+						label="Project"
 						onPress={() => goto('/')}
 					/>
 				</svelte:fragment>
 				<svelte:fragment slot="trailing-1">
 					<NavigationBarTrailing
-						type="text-emphasized"
-						label="Yenile"
+						type="symbol"
+						symbol="restart_alt"
+						label="Reset"
 						onPress={() => documentStore.reset()}
 					/>
 				</svelte:fragment>

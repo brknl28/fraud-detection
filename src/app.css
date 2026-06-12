@@ -101,37 +101,3 @@ body:not(.fonts-loaded) .material-symbols-rounded {
 	margin-inline: auto;
 	padding-inline: var(--app-page-inset);
 }
-
-.topbar-inner .navigation-bar {
-	position: relative;
-}
-
-.topbar-inner .navigation-bar .title-and-controls {
-	position: relative;
-	justify-content: flex-start;
-	gap: 12px;
-}
-
-.topbar-inner .navigation-bar .title-and-controls > .body-emphasized {
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
-	pointer-events: none;
-	white-space: nowrap;
-	max-width: calc(100% - 168px);
-	overflow: hidden;
-	text-overflow: ellipsis;
-	z-index: 0;
-}
-
-.topbar-inner .navigation-bar .title-and-controls > .trailing {
-	margin-left: auto;
-	position: relative;
-	z-index: 1;
-}
-
-.topbar-inner .navigation-bar .title-and-controls > button,
-.topbar-inner .navigation-bar .title-and-controls > :not(.body-emphasized):not(.trailing) {
-	position: relative;
-	z-index: 1;
-}

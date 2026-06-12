@@ -369,8 +369,8 @@
 							</div>
 							<Symbol name="chevron_right" size="small" color="var(--labels-tertiary)" />
 						</div>
-					{/each}
-				</div>
+						{/each}
+					</div>
 			</div>
 
 			<div class="split-col">
@@ -1002,14 +1002,6 @@
 	}
 
 	@media (max-width: 768px) {
-		.topbar-inner :global(.navigation-bar .trailing > button:first-child) {
-			display: none;
-		}
-
-		.topbar-inner :global(.navigation-bar .trailing) {
-			gap: 0;
-		}
-
 		.workspace {
 			padding-block: 18px 80px;
 			gap: 26px;
